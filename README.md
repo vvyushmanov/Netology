@@ -1,0 +1,2 @@
+# Netology
+Learning DEVOPS stuff
