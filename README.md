@@ -9,3 +9,4 @@ Learning DEVOPS stuff
 оверрайд-файлы
 файлы-конфигурации командной строки 
 
+new line for _fix_ branch
