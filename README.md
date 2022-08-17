@@ -10,3 +10,5 @@ Learning DEVOPS stuff
 файлы-конфигурации командной строки 
 
 new line for _fix_ branch
+
+another line for this branch, this time through PyCharm
