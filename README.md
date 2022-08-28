@@ -7,10 +7,10 @@ Learning DEVOPS stuff
    * Добавить в Vagrantfile следующий фрагмент:
 
    
-            `config.vm.provider "virtualbox" do |v|
+            config.vm.provider "virtualbox" do |v|
               v.memory = 2048 # выделить 2ГБ оперативной памяти
               v.cpus = 4 # выделить 4 ядра ЦПУ
-            end`
+            end
 
 3. Ознакомиться с разделами man bash, почитать о настройках самого bash:
 
