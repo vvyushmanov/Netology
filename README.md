@@ -1,67 +1,39 @@
 # Netology
 Learning DEVOPS stuff
 
-1. Найдите полный хеш и комментарий коммита, хеш которого начинается на `aefea`.
 
-Команда: `git show aefea`
+1. По умолчанию системе выделено 2 ядра ЦПУ, 1 GB оперативной памяти и 64GB дискового пространства.
+2. Как добавить оперативной памяти или ресурсов процессора виртуальной машине?
+   * Добавить в Vagrantfile следующий фрагмент:
 
-Ответ:
+   
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 2048 # выделить 2ГБ оперативной памяти
+      v.cpus = 4 # выделить 4 ядра ЦПУ
+    end
 
-    aefead2207ef7e2aa5dc81a34aedf0cad4c32545
-    Update CHANGELOG.md
+3. Ознакомиться с разделами man bash, почитать о настройках самого bash:
 
-2. Какому тегу соответствует коммит `85024d3`?
+* какой переменной можно задать длину журнала history, и на какой строчке manual это описывается?
+  * Переменная HISTFILESIZE, строка 909
+* что делает директива ignoreboth в bash?
+  * При заполнении history игнорирует строки, начинающиеся с пробела, и строки, являющиеся дубликатами ранее введённых.
 
-Команда: `git show 85024d3`
+4.В каких сценариях использования применимы скобки {} и на какой строчке man bash это описано?
+* Также фигурные скобки используются для задания списка значений, которые необходимо "раскрыть" в пределах выполняемой функции, в основном, с целью сокращения (например, при создании или удалении ряда файлов с одинаковой общей частью названия)
+* Описано на строке 294 мануала
 
-Ответ: v0.12.23
-
-3. Сколько родителей у коммита `b8d720`? Напишите их хеши.
-
-Команда: `git show b8d720 --no-abbrev`
-
-Ответ: 2 родителя, 56cd7859e05c36c06b56d013b55a252d0bb7e158 и 9ea88f22fc6269854151c571162c5bcf958bee2b
-
-4. Перечислите хеши и комментарии всех коммитов которые были сделаны между тегами  v0.12.23 и v0.12.24.
-
-Команда: `git log --oneline v0.12.23..v0.12.24 --no-abbrev `
-
-Ответ: 
-
-    3ff1c03bb960b332be3af2e333462dde88b279e v0.12.24      
-    b14b74c4939dcab573326f4e3ee2a62e23e12f89 [Website] vmc provider links    
-    3f235065b9347a758efadc92295b540ee0a5e26e Update CHANGELOG.md    
-    6ae64e247b332925b872447e9ce869657281c2bf registry: Fix panic when server is unreachable    
-    5c619ca1baf2e21a155fcdb4c264cc9e24a2a353 website: Remove links to the getting started guide's old location    
-    06275647e2b53d97d4f0a19a0fec11f6d69820b5 Update CHANGELOG.md    
-    d5f9411f5108260320064349b757f55c09bc4b80 command: Fix bug when using terraform login on Windows    
-    4b6d06cc5dcb78af637bbb19c198faff37a066ed Update CHANGELOG.md    
-    dd01a35078f040ca984cdd349f18d0b67e486c35 Update CHANGELOG.md    
-    225466bc3e5f35baa5d07197bbc079345b77525e Cleanup after v0.12.23 release
-
-
-5. Найдите коммит в котором была создана функция `func providerSource`, ее определение в коде выглядит
-так `func providerSource(...)` (вместо троеточего перечислены аргументы).
-
-Команда: `git log -S 'func providerSource(' --oneline`
-
-Ответ: 8c928e8358 main: Consult local directories as potential mirrors of providers`
-
-6. Найдите все коммиты в которых была изменена функция `globalPluginDirs`.
-
-Команды: `git grep -p 'func globalPluginDirs'` (узнал, в каком файле задана функция), `git log -L :globalPluginDirs:plugins.go --oneline -s`
-
-Ответ:
-
-    78b1220558 Remove config.go and update things using its aliases
-    52dbf94834 keep .terraform.d/plugins for discovery
-    41ab0aef7a Add missing OS_ARCH dir to global plugin paths
-    66ebff90cd move some more plugin search path logic to command
-    8364383c35 Push plugin discovery down into command package
-  
-7. Кто автор функции `synchronizedWriters`? 
-
-Команда: `git log -S 'func synchronizedWriters' --pretty=%an`
-
-Ответ: Martin Atkins
-
+5. С учётом ответа на предыдущий вопрос, как создать однократным вызовом touch 100000 файлов? Получится ли аналогичным образом создать 300000? Если нет, то почему?
+* `touch filename{1..100000}`
+* Не получится, так как будет превышен лимит длины аргументов командной строки, bash выведет сообщение об ошибке `-bash: /usr/bin/touch: Argument list too long`
+6. В man bash поищите по /\[\[. Что делает конструкция [[ -d /tmp ]]
+* [[ выражение ]] выполняет проверку заданных условий и возвращает 1 или 0 в зависимости от того, истинно или ложно выражение.
+* Соответственно, [[ -d /tmp ]] проверяет, существует ли директория /tmp - если да, возвращает 1, если нет - 0
+7. Добавить расположение для для bash:
+    
+        mkdir /tmp/new_path_directory/ 
+        sudo cp /bin/bash /tmp/new_path_directory/
+        export PATH=/tmp/new_path_directory:$PATH
+8. Чем отличается планирование команд с помощью batch и at?
+* at выполняет команды в строго заданное время
+* batch выполняет команды, когда средняя нагрузка системы падает ниже 1.5
