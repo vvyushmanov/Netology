@@ -9,6 +9,7 @@
 version: "3.9"
 services:
   postgres:
+    container_name: test_db
     image: postgres:12
     ports:
       - "5432:5432"
@@ -16,7 +17,7 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - ./data:/var/lib/postgresql/data
-      - ./backup:/var/backup
+      - ./backup:/var/backups
     restart: always
 ```
 ```shell
@@ -271,6 +272,17 @@ SELECT фамилия FROM clients WHERE заказ is not null;
 
 Приведите получившийся результат и объясните что значат полученные значения.
 
+```sql
+EXPLAIN SELECT фамилия FROM clients WHERE заказ is not null;
+                       QUERY PLAN                        
+---------------------------------------------------------
+ Seq Scan on clients  (cost=0.00..1.00 rows=1 width=118)
+   Filter: ("заказ" IS NOT NULL)
+(2 rows)
+```
+
+Запрос выполен последовательно (без индекса), по таблице clients, cost запроса составляет 1, фильтр: поле "заказ" непустое.
+
 ## Задача 6
 
 Создайте бэкап БД test_db и поместите его в volume, предназначенный для бэкапов (см. Задачу 1).
@@ -282,3 +294,31 @@ SELECT фамилия FROM clients WHERE заказ is not null;
 Восстановите БД test_db в новом контейнере.
 
 Приведите список операций, который вы применяли для бэкапа данных и восстановления. 
+
+```bash
+$ docker exec -it -u postgres test_db bash
+$ pg_dump test_db > /var/backups/backup.tar
+$ pg_dumpall --roles-only > /var/backups/backup.tar
+## CTRL+D чтобы отсоединиться
+$ docker stop test_db
+$ docker-compose -f postgres_2.yml up --detach --no-recreate
+$ docker exec -it -u postgres test_db_restored bash
+$ psql postgres < /var/backups/roles
+$ pg_restore -C -d postgres /var/backups/backup.tar
+```
+
+postgres_2.yml:
+```yml
+version: "3.9"
+services:
+  postgres_2:
+    container_name: test_db_restored
+    image: postgres:12
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./backup:/var/backups
+    restart: always
+```

@@ -1,13 +1,12 @@
 version: "3.9"
 services:
-  postgres:
-    container_name: test_db
+  postgres_2:
+    container_name: test_db_restored
     image: postgres:12
     ports:
-      - "5432:5432"
+      - "5433:5433"
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ./data:/var/lib/postgresql/data
       - ./backup:/var/backups
     restart: always
