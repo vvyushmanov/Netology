@@ -118,7 +118,10 @@ Foreign-key constraints:
 ```
 
 ```sql
-SELECT table_name, grantee, privilege_type FROM information_schema.role_table_grants WHERE table_name IN ('clients', 'orders') AND table_catalog='test_db' ORDER BY table_name, grantee ASC;
+SELECT table_name, grantee, privilege_type 
+FROM information_schema.role_table_grants 
+WHERE table_name IN ('clients', 'orders') AND table_catalog='test_db' 
+ORDER BY table_name, grantee ASC;
 ```
 ```
 36 rows returned
