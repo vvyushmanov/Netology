@@ -1,3 +1,5 @@
+--Задание 2
+
 CREATE USER test_admin_user;
 CREATE DATABASE test_db;
 
@@ -23,7 +25,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON clients, orders TO test_simple_user;
 
 SELECT table_name, grantee, privilege_type FROM information_schema.role_table_grants WHERE table_name IN ('clients', 'orders') AND table_catalog='test_db' ORDER BY table_name, grantee ASC;
 
-////////
+--Задание 3
 
 INSERT INTO orders (наименование, цена) VALUES ('Шоколад', 10);
 INSERT INTO orders (наименование, цена) VALUES ('Принтер', 3000);
@@ -40,7 +42,7 @@ INSERT INTO clients (фамилия, "страна проживания") VALUES
 SELECT COUNT (*) FROM orders;
 SELECT COUNT (*) FROM clients;
 
-///////////////////
+--Задание 4
 
 UPDATE clients SET заказ = (select id from orders where наименование='Книга') WHERE фамилия='Иванов Иван Иванович';
 UPDATE clients SET заказ = (select id from orders where наименование='Монитор') WHERE фамилия='Петров Петр Петрович';
@@ -49,6 +51,7 @@ UPDATE clients SET заказ = (select id from orders where наименова�
 SELECT фамилия FROM clients WHERE заказ is not null;
 
 
-///////////////
+--Задание 5
+
 
 EXPLAIN SELECT фамилия FROM clients WHERE заказ is not null;
