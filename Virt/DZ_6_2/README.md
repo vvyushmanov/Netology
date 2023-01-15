@@ -22,7 +22,7 @@ services:
 ```
 ```shell
 $ docker-compose -f postgres.yml up --detach
-$ docker exec -it -u postgres dz_6_2_postgres_1 psql
+$ docker exec -it -u postgres test_db psql
 ```
 
 ## Задача 2
