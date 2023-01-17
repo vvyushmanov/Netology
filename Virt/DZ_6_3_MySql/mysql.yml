@@ -1,0 +1,12 @@
+# Use root/example as user/password credentials
+version: '3.1'
+services:
+  mysql_1:
+    container_name: mysql
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: netology
+    volumes:
+      - ./data:/var/lib/mysql
