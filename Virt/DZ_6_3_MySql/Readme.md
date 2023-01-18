@@ -29,7 +29,6 @@ services:
 
 ```shell
 $ docker exec -it -u root mysql bash
-$ mysqladmin -u root -pnetology create test_db
 $ mysql -uroot -p"netology" test_db < test_dump.sql
 ```
 
@@ -68,7 +67,7 @@ Threads: 2  Questions: 242  Slow queries: 0  Opens: 315  Flush tables: 3  Open t
 
 Подключитесь к восстановленной БД и получите список таблиц из этой БД.
 
-```shell
+```sql
 mysql> show tables;
 +-------------------+
 | Tables_in_test_db |
@@ -80,6 +79,7 @@ mysql> show tables;
 
 **Приведите в ответе** количество записей с `price` > 300.
 
+```sql
 mysql> select count(*) from orders where price > 300;
 +----------+
 | count(*) |
@@ -87,6 +87,7 @@ mysql> select count(*) from orders where price > 300;
 |        1 |
 +----------+
 1 row in set (0.00 sec)
+```
 
 В следующих заданиях мы будем продолжать работу с данным контейнером.
 
@@ -108,7 +109,12 @@ mysql> select count(*) from orders where price > 300;
 
 
 ```sql
-CREATE USER 'test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test-pass' WITH MAX_QUERIES_PER_HOUR 100 FAILED_LOGIN_ATTEMPTS 3 PASSWORD EXPIRE INTERVAL 180 DAY ATTRIBUTE '{"fname": "James", "lname": "Pretty"}';
+CREATE USER 'test'@'localhost' IDENTIFIED 
+  WITH mysql_native_password BY 'test-pass' 
+  WITH MAX_QUERIES_PER_HOUR 100 
+  FAILED_LOGIN_ATTEMPTS 3 
+  PASSWORD EXPIRE INTERVAL 180 DAY 
+  ATTRIBUTE '{"fname": "James", "lname": "Pretty"}';
 GRANT SELECT ON test_db.* TO 'test'@'localhost';
 SELECT * FROM information_schema.user_attributes WHERE USER='test';
 +------+-----------+---------------------------------------+
