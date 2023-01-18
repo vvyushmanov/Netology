@@ -103,16 +103,59 @@ mysql> select count(*) from orders where price > 300;
 Используя таблицу INFORMATION_SCHEMA.USER_ATTRIBUTES получите данные по пользователю `test` и 
 **приведите в ответе к задаче**.
 
+
+```sql
+CREATE USER 'test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test-pass' WITH MAX_QUERIES_PER_HOUR 100 FAILED_LOGIN_ATTEMPTS 3 PASSWORD EXPIRE INTERVAL 180 DAY ATTRIBUTE '{"fname": "James", "lname": "Pretty"}';
+GRANT SELECT ON test_db.* TO 'test'@'localhost';
+SELECT * FROM information_schema.user_attributes WHERE USER='test';
++------+-----------+---------------------------------------+
+| USER | HOST      | ATTRIBUTE                             |
++------+-----------+---------------------------------------+
+| test | localhost | {"fname": "James", "lname": "Pretty"} |
++------+-----------+---------------------------------------+
+1 row in set (0.00 sec)
+
+```
+
 ## Задача 3
 
 Установите профилирование `SET profiling = 1`.
 Изучите вывод профилирования команд `SHOW PROFILES;`.
 
+```sql
+set profiling = 1;
+SHOW PROFILES;
+Empty set, 1 warning (0.00 sec)
+-- вывод пуст, т.к. после включения профайлинга других запросов не было
+```
+
 Исследуйте, какой `engine` используется в таблице БД `test_db` и **приведите в ответе**.
+
+```sql
+show table status where name='orders';
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+-------------+------------+--------------------+----------+----------------+---------+
+| Name   | Engine | Version | Row_format | Rows | Avg_row_length | Data_length | Max_data_length | Index_length | Data_free | Auto_increment | Create_time         | Update_time | Check_time | Collation          | Checksum | Create_options | Comment |
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+-------------+------------+--------------------+----------+----------------+---------+
+| orders | InnoDB |      10 | Dynamic    |    5 |           3276 |       16384 |               0 |            0 |         0 |              6 | 2023-01-17 22:56:34 | NULL        | NULL       | utf8mb4_0900_ai_ci |     NULL |                |         |
++--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+-------------+------------+--------------------+----------+----------------+---------+
+1 row in set (0.00 sec)
+
+-- в таблице используется движок InnoDB
+```
 
 Измените `engine` и **приведите время выполнения и запрос на изменения из профайлера в ответе**:
 - на `MyISAM`
 - на `InnoDB`
+
+```sql
+SHOW PROFILES;
+| Query_ID | Duration   | Query                                  |
++----------+------------+----------------------------------------+
+|        ...
+|        7 | 0.48279375 | ALTER TABLE orders engine='MyISAM'     |
+|        8 | 0.83713650 | ALTER TABLE orders engine='InnoDB'     |
++----------+------------+----------------------------------------+
+```
 
 ## Задача 4 
 
