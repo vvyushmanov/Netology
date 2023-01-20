@@ -104,7 +104,7 @@ ANALYZE
 **Приведите в ответе** команду, которую вы использовали для вычисления и полученный результат.
 
 ```sql
-test_database=# SELECT attname, avg_width from (SELECT
+SELECT attname, avg_width from (SELECT
     attname,
     avg_width
   FROM
@@ -118,6 +118,7 @@ JOIN (
   where
     tablename = 'orders'
 ) width ON names.avg_width = width.mw;
+-- Результат
  attname | avg_width 
 ---------+-----------
  title   |        16
@@ -137,7 +138,7 @@ CREATE TABLE orders_1 ( CHECK (price > 499) ) INHERITS (orders);
 CREATE TABLE orders_2 ( CHECK (price <= 499) ) INHERITS (orders);
 INSERT INTO orders_1 SELECT * FROM orders WHERE price > 499;
 DELETE FROM orders WHERE price > 499;
-INSERT INTO orders_1 SELECT * FROM orders WHERE price <= 499;
+INSERT INTO orders_2 SELECT * FROM orders WHERE price <= 499;
 DELETE FROM orders WHERE price <= 499;
 COMMIT;
 ```
@@ -191,11 +192,3 @@ CREATE TABLE public.orders (
 
 ALTER TABLE public.orders OWNER TO postgres;
 ```
-
----
-
-### Как cдавать задание
-
-Выполненное домашнее задание пришлите ссылкой на .md-файл в вашем репозитории.
-
----
