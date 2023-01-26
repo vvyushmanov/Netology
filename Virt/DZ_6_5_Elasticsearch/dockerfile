@@ -1,0 +1,30 @@
+FROM centos:7
+
+# copy the configuration file into the container
+COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
+
+RUN groupadd -g 1000 elasticsearch && useradd elasticsearch -u 1000 -g 1000
+
+WORKDIR /usr/share/elasticsearch
+
+# install wget
+RUN yum -y install wget perl-Digest-SHA sudo && yum -y clean all  && rm -rf /var/cache
+
+RUN rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.6.1-x86_64.rpm
+RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.6.1-x86_64.rpm.sha512
+RUN shasum -a 512 -c elasticsearch-8.6.1-x86_64.rpm.sha512 
+
+RUN rpm --install elasticsearch-8.6.1-x86_64.rpm
+
+EXPOSE 9200
+EXPOSE 9300
+
+COPY config/elasticsearch.yml /etc/elasticsearch/
+
+USER elasticsearch
+CMD /usr/share/elasticsearch/bin/elasticsearch
+HEALTHCHECK CMD curl http://localhost:9200 
+
+

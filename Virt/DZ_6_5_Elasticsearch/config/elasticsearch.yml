@@ -1,0 +1,14 @@
+cluster.name: docker-cluster-netology
+
+node.name: netology
+
+network.host: 0.0.0.0
+discovery.type: single-node
+http.port: 9200
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+bootstrap.memory_lock: true
+
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
