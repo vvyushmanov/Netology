@@ -23,8 +23,10 @@ EXPOSE 9300
 
 COPY config/elasticsearch.yml /etc/elasticsearch/
 
+RUN mkdir /usr/share/elasticsearch/snapshots && chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/snapshots
+
 USER elasticsearch
-CMD /usr/share/elasticsearch/bin/elasticsearch
+ENTRYPOINT /usr/share/elasticsearch/bin/elasticsearch
 HEALTHCHECK CMD curl http://localhost:9200 
 
 
