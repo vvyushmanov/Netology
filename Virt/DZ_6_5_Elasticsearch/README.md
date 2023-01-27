@@ -35,7 +35,7 @@
 
 1. [Манифест](https://github.com/vvyushmanov/devops-netology/blob/main/Virt/DZ_6_5_Elasticsearch/dockerfile)
 2. [Файл конфигурации](https://github.com/vvyushmanov/devops-netology/blob/main/Virt/DZ_6_5_Elasticsearch/config/elasticsearch.yml)
-3. [Образ](https://hub.docker.com/r/vyushmanov/elasticsearch)
+3. [Образ](https://hub.docker.com/r/vyushmanov/elasticsearch/tags)
 4. Вывод:
 
 
@@ -185,6 +185,14 @@
 }
 ```
 
+`GET localhost:9200/_cat/indices`
+
+```
+green  open ind-1 nw9D8W_LTeiCuIZruQPMsw 1 0 0 0 225b 225b
+yellow open ind-3 pR4pT-AITRqVVaBDBHx3Aw 4 2 0 0 413b 413b
+yellow open ind-2 UqrEnRoCS_2NS3MZ15_AQg 2 1 0 0 413b 413b
+```
+
 Часть индексов и кластер находятся в состоянии Yellow потому, что в кластере всего 1 нода, и невозможно заассайнить все шарды и их реплики.
 
 ## Задача 3
@@ -305,7 +313,8 @@
 }
 ```
 
-4. Список файлов (директория монтирована с хост-машины, см. docker-copmose.yml:
+4. Список файлов (директория монтирована с хост-машины, см. [docker-copmose.yml](https://github.com/vvyushmanov/devops-netology/blob/main/Virt/DZ_6_5_Elasticsearch/docker-compose.yml)):
+
 ```shell
 [vyushmanov@vyushmanov-GL703VD:~/Repos/devops-netology/Virt/DZ_6_5_Elasticsearch on main]
 $ ll ./snapshots                                                                                ✹ ✭
