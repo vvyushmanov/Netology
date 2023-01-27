@@ -17,6 +17,7 @@ RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.6.
 RUN shasum -a 512 -c elasticsearch-8.6.1-x86_64.rpm.sha512 
 
 RUN rpm --install elasticsearch-8.6.1-x86_64.rpm
+RUN rm -f elasticsearch-8.6.1-x86_64.rpm
 
 EXPOSE 9200
 EXPOSE 9300
