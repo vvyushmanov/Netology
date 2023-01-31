@@ -93,4 +93,5 @@ compute-default-zone: ru-central1-a
 ### Ответы
 
 1. Такие образы можно создать с помощью Packer
-2. 
+2. [YC конфигурация](https://github.com/vvyushmanov/devops-netology/tree/main/Virt/DZ_7_2_TF_Syntax/yc)
+3. [AWS конфигурация](https://github.com/vvyushmanov/devops-netology/tree/main/Virt/DZ_7_2_TF_Syntax/aws)

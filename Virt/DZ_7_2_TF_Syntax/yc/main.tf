@@ -1,4 +1,6 @@
-provider "yandex" {}
+provider "yandex" {
+    // все параметры заданы через export YC_*
+}
 
 data "yandex_compute_image" "Ubuntu-22" {
   family = "ubuntu-2204-lts"
