@@ -11,9 +11,9 @@ output "region" {
 }
 
 output "IP" {
-  value = resource.aws_instance.netology.private_ip
+  value = aws_instance.netology.private_ip
 }
 
 output "subnet_id" {
-  value = resource.aws_instance.netology.subnet_id
+  value = aws_instance.netology.subnet_id
 }
