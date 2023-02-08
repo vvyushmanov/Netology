@@ -12,8 +12,6 @@ func main() {
 		fmt.Println("Not a valid number!")
 		return
 	}
-
 	output := input / 0.3048
-
 	fmt.Println(output)
 }
