@@ -67,7 +67,7 @@ func main() {
    var result int
    result = array[0]
    for i := 0; i < len(array); i++ {
-      if result > array[i] {
+      if array[i] < result {
          result = array[i]
       }
    }
