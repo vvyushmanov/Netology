@@ -1,0 +1,16 @@
+---
+clickhouse:
+  hosts:
+    clickhouse-01:
+      ansible_connection: ssh
+      ansible_host: 
+vector:
+  hosts:
+    vector-01:
+      ansible_connection: ssh
+      ansible_host: 
+lighthouse:
+  hosts:
+    lighthouse-01:
+      ansible_connection: ssh
+      ansible_host: 
