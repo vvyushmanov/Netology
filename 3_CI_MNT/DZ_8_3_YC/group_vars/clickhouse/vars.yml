@@ -4,4 +4,4 @@ clickhouse_packages:
   - clickhouse-client
   - clickhouse-server
   - clickhouse-common-static
-home: "/home/vector/vector"
+  

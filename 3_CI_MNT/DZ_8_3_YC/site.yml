@@ -1,6 +1,116 @@
 ---
+- name: Create VMs
+  hosts: localhost
+  tasks:
+  - name: Create Clickhouse vm
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: clickhouse
+      login: "{{ yc_ssh_username }}"
+      public_ssh_key: "{{ yc_ssh_pkey }}"
+      hostname: clickhouse-01
+      zone_id: "{{ yc_zone }}"
+      folder_id: "{{ yc_folder_id }}"
+      platform_id: "Intel Cascade Lake"
+      core_fraction: 100
+      cores: 2
+      memory: 4
+      image_id: "{{ centos7 }}"
+      disk_type: hdd
+      disk_size: 50
+      subnet_id: "{{ yc_subnet_id }}"
+      assign_public_ip: true
+      state: present
+
+  - name: Start Clickhouse vm
+    tags: start
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: clickhouse
+      operation: start
+      folder_id: "{{ yc_folder_id }}"
+
+  - name: Create Vector vm
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: vector
+      login: "{{ yc_ssh_username }}"
+      public_ssh_key: "{{ yc_ssh_pkey }}"
+      hostname: vector-01
+      zone_id: "{{ yc_zone }}"
+      folder_id: "{{ yc_folder_id }}"
+      platform_id: "Intel Cascade Lake"
+      core_fraction: 100
+      cores: 2
+      memory: 4
+      image_id: "{{ centos7 }}"
+      disk_type: hdd
+      disk_size: 50
+      subnet_id: "{{ yc_subnet_id }}"
+      assign_public_ip: true
+      state: present
+
+  - name: Start Vector vm
+    tags: start
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: vector
+      operation: start
+      folder_id: "{{ yc_folder_id }}"
+
+  - name: Create Lighthouse vm
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: lighthouse
+      login: "{{ yc_ssh_username }}"
+      public_ssh_key: "{{ yc_ssh_pkey }}"
+      hostname: lighthouse-01
+      zone_id: "{{ yc_zone }}"
+      folder_id: "{{ yc_folder_id }}"
+      platform_id: "Intel Cascade Lake"
+      core_fraction: 100
+      cores: 2
+      memory: 4
+      image_id: "{{ centos7 }}"
+      disk_type: hdd
+      disk_size: 50
+      subnet_id: "{{ yc_subnet_id }}"
+      assign_public_ip: true
+      state: present
+
+  - name: Start Lighthouse vm
+    tags: start
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: vector
+      operation: start
+      folder_id: "{{ yc_folder_id }}"
+
+- name: Collect instances
+  hosts: localhost
+  tags: init
+  gather_facts: false
+  tasks:
+    - name: Display YC instances
+      ansible.builtin.command: yc compute instance list --format=yaml --folder-name=default
+      register: yc_instances
+    - name: Set fact
+      ansible.builtin.set_fact:
+        _yc_instances: '{{ yc_instances.stdout | from_yaml }}'
+    - name: Add hosts
+      ansible.builtin.add_host:
+        name: "{{ item['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'] }}"
+        groups: "{{ item['name'] }}"
+      with_items: "{{ _yc_instances }}"
+
 - name: Install Clickhouse
-  hosts: all
+  hosts: clickhouse
   tags: clickhouse, full
   handlers:
     - name: Start clickhouse service
@@ -8,6 +118,7 @@
       ansible.builtin.service:
         name: clickhouse-server
         state: restarted
+        enabled: true
   tasks:
     - name: Get Clickhouse
       block:
@@ -15,12 +126,14 @@
           ansible.builtin.get_url:
             url: "https://packages.clickhouse.com/rpm/stable/{{ item }}-{{ clickhouse_version }}.noarch.rpm"
             dest: "./{{ item }}-{{ clickhouse_version }}.rpm"
+            mode: '0644'
           with_items: "{{ clickhouse_packages }}"
       rescue:
         - name: Get clickhouse distrib
           ansible.builtin.get_url:
             url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
             dest: "./clickhouse-common-static-{{ clickhouse_version }}.rpm"
+            mode: '0644'
     - name: Install clickhouse packages
       become: true
       ansible.builtin.yum:
@@ -28,6 +141,12 @@
           - clickhouse-common-static-{{ clickhouse_version }}.rpm
           - clickhouse-client-{{ clickhouse_version }}.rpm
           - clickhouse-server-{{ clickhouse_version }}.rpm
+    - name: Set listen host
+      become: true
+      ansible.builtin.template:
+        src: templates/clickhouse.xml.j2
+        dest: /etc/clickhouse-server/config.d/listen_host.xml
+        mode: '0644'
       notify: Start clickhouse service
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
@@ -36,13 +155,15 @@
       register: create_db
       failed_when: create_db.rc != 0 and create_db.rc != 82
       changed_when: create_db.rc == 0
+
 - name: Install Vector
-  hosts: all
+  hosts: vector
   tags: vector, full
   handlers:
     - name: Start vector service
       become: true
       ansible.builtin.service:
+        enabled: true
         name: vector
         state: restarted
   tasks:
@@ -117,3 +238,70 @@
             group: root
             mode: '0644'
           notify: Start vector service
+- name: Install Nginx
+  hosts: lighthouse
+  tags: lighthouse, full
+  handlers:
+    - name: Start nginx
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: restarted
+
+    - name: Reload nginx
+      become: true
+      ansible.builtin.command: nginx -s reload
+  tasks:
+    - name: Install epel
+      become: true
+      ansible.builtin.yum:
+        name: epel-release
+        state: present
+    - name: Install nginx
+      become: true
+      ansible.builtin.yum:
+        name: nginx
+        state: present
+      notify: Start nginx
+    - name: Create config
+      become: true
+      ansible.builtin.template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        mode: '0644'
+      notify: Reload nginx
+- name: Install Lighthouse
+  hosts: lighthouse
+  tags: lighthouse, full
+  handlers:
+    - name: Reload nginx
+      become: true
+      ansible.builtin.command: nginx -s reload
+  pre_tasks:
+    - name: Install Git
+      become: true
+      ansible.builtin.yum:
+        name: git
+        state: present
+  tasks:
+    - name: Get LH repo
+      ansible.builtin.git:
+        repo: "{{ lh_repo }}"
+        version: master
+        dest: "{{ lh_location }}"
+    - name: Set LH config
+      become: true
+      ansible.builtin.template:
+        src: templates/lighthouse.conf.j2
+        dest: /etc/nginx/conf.d/default.conf
+        mode: '0644'
+      notify:
+        - Reload nginx
+    - name: Centos7 give access to html directory
+      become: true
+      ansible.builtin.command: chcon -Rt httpd_sys_content_t "{{ lh_location }}"
+      notify:
+        - Reload nginx
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
