@@ -1,6 +1,7 @@
 ---
 - name: Create VMs
   hosts: localhost
+  tags: vm
   tasks:
   - name: Create Clickhouse vm
     ycc_vm:
@@ -94,7 +95,7 @@
 
 - name: Collect instances
   hosts: localhost
-  tags: init
+  tags: init,full
   gather_facts: false
   tasks:
     - name: Display YC instances
@@ -303,5 +304,3 @@
       ansible.builtin.command: chcon -Rt httpd_sys_content_t "{{ lh_location }}"
       notify:
         - Reload nginx
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
