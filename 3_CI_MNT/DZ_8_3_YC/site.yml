@@ -64,6 +64,7 @@
       folder_id: "{{ yc_folder_id }}"
 
   - name: Create Lighthouse vm
+    tags: lighthouse
     ycc_vm:
       auth:
         token: "{{ yc_token }}"
@@ -299,8 +300,14 @@
         mode: '0644'
       notify:
         - Reload nginx
-    - name: Centos7 give access to html directory
+    - name: SELinux give access to html directory for nginx
       become: true
-      ansible.builtin.command: chcon -Rt httpd_sys_content_t "{{ lh_location }}"
+      community.general.sefcontext:
+        target: '{{ lh_location }}(/.*)?'
+        setype: httpd_sys_content_t
+        state: present
+    - name: Apply new SELinux file context to filesystem
+      become: true
+      command: restorecon -iRv {{ lh_location }}
       notify:
         - Reload nginx
