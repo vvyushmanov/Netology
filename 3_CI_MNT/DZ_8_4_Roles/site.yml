@@ -13,6 +13,19 @@
 - name: Install Clickhouse
   hosts: clickhouse
   tags: clickhouse, full
+  vars:
+    clickhouse_users_custom:
+      - { name: "netology",
+          password: "netology",
+          networks: "::",
+          profile: "default",
+          quota: "default",
+          dbs: [logs],
+          comment: "classic user with plain password" }
+    clickhouse_listen_host:
+      - "::"
+    clickhouse_dbs_custom:
+      - { name: logs }
   roles:
     - clickhouse
 - name: Install Vector
@@ -24,38 +37,37 @@
   hosts: lighthouse
   tags: lighthouse, full
   handlers:
-  - name: Start nginx
-    become: true
-    ansible.builtin.service:
-      name: nginx
-      enabled: true
-      state: restarted
-  - name: Reload nginx
-    become: true
-    ansible.builtin.command: nginx -s reload
+    - name: Start nginx
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: restarted
+    - name: Reload nginx
+      become: true
+      ansible.builtin.command: nginx -s reload
   pre_tasks:
     - name: Install Nginx
       block:
-      - name: Install epel
-        become: true
-        ansible.builtin.yum:
-          name: epel-release
-          state: present
-      - name: Install nginx
-        become: true
-        ansible.builtin.yum:
-          name: nginx
-          state: present
-        notify: Start nginx
-      - name: Create config
-        become: true
-        ansible.builtin.template:
-          src: templates/nginx.conf.j2
-          dest: /etc/nginx/nginx.conf
-          mode: '0644'
-        notify: Reload nginx
-      - name: Flush handlers
-        ansible.builtin.meta: flush_handlers
+        - name: Install epel
+          become: true
+          ansible.builtin.yum:
+            name: epel-release
+            state: present
+        - name: Install nginx
+          become: true
+          ansible.builtin.yum:
+            name: nginx
+            state: present
+          notify: Start nginx
+        - name: Create config
+          become: true
+          ansible.builtin.template:
+            src: templates/nginx.conf.j2
+            dest: /etc/nginx/nginx.conf
+            mode: '0644'
+          notify: Reload nginx
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
   roles:
     - lighthouse-role
-
