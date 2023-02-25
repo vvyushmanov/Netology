@@ -9,6 +9,11 @@
     version: "1.0.0"
     name: vector-role 
 
+  - src: git@github.com:vvyushmanov/lighthouse-role.git
+    scm: git
+    version: "1.0.1"
+    name: lighthouse-role 
+
 
 
     
