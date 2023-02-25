@@ -1,0 +1,16 @@
+server {
+
+        listen       8123;         
+        server_name  lighthouse;
+        # lets you doname-based virtual hosting
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            #The location setting lets you configure how nginx responds to requests for resources within the server.
+            root   {{ lh_location }};
+            index  index.html index.htm;
+        }
+}
