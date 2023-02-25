@@ -11,7 +11,7 @@
     hostname: clickhouse-01
     zone_id: "{{ yc_zone }}"
     folder_id: "{{ yc_folder_id }}"
-    platform_id: "Intel Cascade Lake"
+    platform_id: "Intel Ice Lake"
     core_fraction: 100
     cores: 2
     memory: 4
@@ -42,10 +42,10 @@
     hostname: vector-01
     zone_id: "{{ yc_zone }}"
     folder_id: "{{ yc_folder_id }}"
-    platform_id: "Intel Cascade Lake"
+    platform_id: "Intel Ice Lake"
     core_fraction: 100
     cores: 2
-    memory: 4
+    memory: 2
     image_id: "{{ centos7 }}"
     disk_type: hdd
     disk_size: 50
@@ -73,10 +73,10 @@
     hostname: lighthouse-01
     zone_id: "{{ yc_zone }}"
     folder_id: "{{ yc_folder_id }}"
-    platform_id: "Intel Cascade Lake"
+    platform_id: "Intel Ice Lake"
     core_fraction: 100
     cores: 2
-    memory: 4
+    memory: 2
     image_id: "{{ centos7 }}"
     disk_type: hdd
     disk_size: 50

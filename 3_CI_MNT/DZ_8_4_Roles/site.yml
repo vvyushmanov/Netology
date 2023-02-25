@@ -16,18 +16,34 @@
   vars:
     clickhouse_users_custom:
       - { name: "netology",
-          password: "netology",
-          networks: "::",
-          profile: "default",
+          password: "",
+          networks: { 0.0.0.0/0 },
+          profile: "netology",
           quota: "default",
-          dbs: [logs],
+          dbs: [logs, default, system],
           comment: "classic user with plain password" }
     clickhouse_listen_host:
       - "::"
     clickhouse_dbs_custom:
       - { name: logs }
+    clickhouse_profiles_custom:
+      netology:
+        max_memory_usage: 10000000000
+        use_uncompressed_cache: 0
+        load_balancing: random
+        readonly: 0
   roles:
     - clickhouse
+  post_tasks:
+    - name: Create table
+      ansible.builtin.command: "clickhouse-client -q \
+      'CREATE TABLE logs.logs ( \
+      message String ) \
+      ENGINE = MergeTree() \
+      ORDER BY tuple();'"
+      register: create_table
+      failed_when: create_table.rc != 0 and create_table.rc != 57
+      changed_when: create_table.rc == 0
 - name: Install Vector
   hosts: vector
   tags: vector, full
