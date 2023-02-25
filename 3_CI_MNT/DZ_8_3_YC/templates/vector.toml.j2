@@ -1,0 +1,36 @@
+#                                    __   __  __
+#                                    \ \ / / / /
+#                                     \ V / / /
+#                                      \_/  \/
+#
+#                                    V E C T O R
+#                                   Configuration
+#
+# ------------------------------------------------------------------------------
+# Website: https://vector.dev
+# Docs: https://vector.dev/docs
+# Chat: https://chat.vector.dev
+# ------------------------------------------------------------------------------
+
+# Change this to use a non-default directory for Vector data storage:
+# data_dir = "/var/lib/vector"
+
+[sources.dmesg]
+type = "file"
+include = [ "/var/log/dmesg" ]
+read_from = "end"
+
+[sinks.clickhouse]
+type = "clickhouse"
+inputs = [ "dmesg" ]
+endpoint = "clickhouse-01:8123"
+database = "logs"
+table = "logs"
+skip_unknown_fields = true
+
+# Vector's GraphQL API (disabled by default)
+# Uncomment to try it out with the `vector top` command or
+# in your browser at http://localhost:8686
+#[api]
+#enabled = true
+#address = "127.0.0.1:8686"

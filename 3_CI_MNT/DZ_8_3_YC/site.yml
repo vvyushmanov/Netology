@@ -90,7 +90,7 @@
     ycc_vm:
       auth:
         token: "{{ yc_token }}"
-      name: vector
+      name: lighthouse
       operation: start
       folder_id: "{{ yc_folder_id }}"
 
@@ -102,6 +102,8 @@
     - name: Display YC instances
       ansible.builtin.command: yc compute instance list --format=yaml --folder-name=default
       register: yc_instances
+      failed_when: yc_instances.rc != 0
+      changed_when: false
     - name: Set fact
       ansible.builtin.set_fact:
         _yc_instances: '{{ yc_instances.stdout | from_yaml }}'
@@ -157,6 +159,15 @@
       register: create_db
       failed_when: create_db.rc != 0 and create_db.rc != 82
       changed_when: create_db.rc == 0
+    - name: Create table
+      ansible.builtin.command: "clickhouse-client -q \
+      'CREATE TABLE logs.logs ( \
+      message String ) \
+      ENGINE = MergeTree() \
+      ORDER BY tuple();'"
+      register: create_table
+      failed_when: create_table.rc != 0 and create_table.rc != 57
+      changed_when: create_table.rc == 0
 
 - name: Install Vector
   hosts: vector
@@ -222,6 +233,14 @@
             path: "/etc/vector"
             state: directory
             mode: '0755'
+        - name: Implement config
+          become: true
+          ansible.builtin.template:
+            src: templates/vector.toml.j2
+            dest: "{{ home }}/config/vector.toml"
+            owner: vector
+            group: vector
+            mode: '0644'
         - name: Create symlink for config
           become: true
           ansible.builtin.file:
