@@ -87,7 +87,7 @@
     <!-- Same for hosts with disabled ipv6: -->
     <!-- <listen_host>0.0.0.0</listen_host> -->
 {% for host in clickhouse_listen_host %}
-    <listen_host>{{ host }}</listen_host>
+    <listen_host>::</listen_host>
 {% endfor %}
 
     <max_connections>{{ clickhouse_config.max_connections }}</max_connections>

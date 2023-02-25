@@ -2,117 +2,14 @@
 - name: Create VMs
   hosts: localhost
   tags: vm
-  tasks:
-  - name: Create Clickhouse vm
-    ycc_vm:
-      auth:
-        token: "{{ yc_token }}"
-      name: clickhouse
-      login: "{{ yc_ssh_username }}"
-      public_ssh_key: "{{ yc_ssh_pkey }}"
-      hostname: clickhouse-01
-      zone_id: "{{ yc_zone }}"
-      folder_id: "{{ yc_folder_id }}"
-      platform_id: "Intel Cascade Lake"
-      core_fraction: 100
-      cores: 2
-      memory: 4
-      image_id: "{{ centos7 }}"
-      disk_type: hdd
-      disk_size: 50
-      subnet_id: "{{ yc_subnet_id }}"
-      assign_public_ip: true
-      state: present
-
-  - name: Start Clickhouse vm
-    tags: start
-    ycc_vm:
-      auth:
-        token: "{{ yc_token }}"
-      name: clickhouse
-      operation: start
-      folder_id: "{{ yc_folder_id }}"
-
-  - name: Create Vector vm
-    ycc_vm:
-      auth:
-        token: "{{ yc_token }}"
-      name: vector
-      login: "{{ yc_ssh_username }}"
-      public_ssh_key: "{{ yc_ssh_pkey }}"
-      hostname: vector-01
-      zone_id: "{{ yc_zone }}"
-      folder_id: "{{ yc_folder_id }}"
-      platform_id: "Intel Cascade Lake"
-      core_fraction: 100
-      cores: 2
-      memory: 4
-      image_id: "{{ centos7 }}"
-      disk_type: hdd
-      disk_size: 50
-      subnet_id: "{{ yc_subnet_id }}"
-      assign_public_ip: true
-      state: present
-
-  - name: Start Vector vm
-    tags: start
-    ycc_vm:
-      auth:
-        token: "{{ yc_token }}"
-      name: vector
-      operation: start
-      folder_id: "{{ yc_folder_id }}"
-
-  - name: Create Lighthouse vm
-    tags: lighthouse
-    ycc_vm:
-      auth:
-        token: "{{ yc_token }}"
-      name: lighthouse
-      login: "{{ yc_ssh_username }}"
-      public_ssh_key: "{{ yc_ssh_pkey }}"
-      hostname: lighthouse-01
-      zone_id: "{{ yc_zone }}"
-      folder_id: "{{ yc_folder_id }}"
-      platform_id: "Intel Cascade Lake"
-      core_fraction: 100
-      cores: 2
-      memory: 4
-      image_id: "{{ centos7 }}"
-      disk_type: hdd
-      disk_size: 50
-      subnet_id: "{{ yc_subnet_id }}"
-      assign_public_ip: true
-      state: present
-
-  - name: Start Lighthouse vm
-    tags: start
-    ycc_vm:
-      auth:
-        token: "{{ yc_token }}"
-      name: lighthouse
-      operation: start
-      folder_id: "{{ yc_folder_id }}"
-
+  roles:
+    - yc-CLV
 - name: Collect instances
   hosts: localhost
   tags: always
   gather_facts: false
-  tasks:
-    - name: Display YC instances
-      ansible.builtin.command: yc compute instance list --format=yaml --folder-name=default
-      register: yc_instances
-      failed_when: yc_instances.rc != 0
-      changed_when: false
-    - name: Set fact
-      ansible.builtin.set_fact:
-        _yc_instances: '{{ yc_instances.stdout | from_yaml }}'
-    - name: Add hosts
-      ansible.builtin.add_host:
-        name: "{{ item['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'] }}"
-        groups: "{{ item['name'] }}"
-      with_items: "{{ _yc_instances }}"
-
+  roles:
+    - yc-instances
 - name: Install Clickhouse
   hosts: clickhouse
   tags: clickhouse, full
@@ -126,6 +23,39 @@
 - name: Install Lighthouse
   hosts: lighthouse
   tags: lighthouse, full
+  handlers:
+  - name: Start nginx
+    become: true
+    ansible.builtin.service:
+      name: nginx
+      enabled: true
+      state: restarted
+  - name: Reload nginx
+    become: true
+    ansible.builtin.command: nginx -s reload
+  pre_tasks:
+    - name: Install Nginx
+      block:
+      - name: Install epel
+        become: true
+        ansible.builtin.yum:
+          name: epel-release
+          state: present
+      - name: Install nginx
+        become: true
+        ansible.builtin.yum:
+          name: nginx
+          state: present
+        notify: Start nginx
+      - name: Create config
+        become: true
+        ansible.builtin.template:
+          src: templates/nginx.conf.j2
+          dest: /etc/nginx/nginx.conf
+          mode: '0644'
+        notify: Reload nginx
+      - name: Flush handlers
+        ansible.builtin.meta: flush_handlers
   roles:
     - lighthouse-role
 

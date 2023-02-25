@@ -1,0 +1,95 @@
+---
+# tasks file for yc-CLV
+- name: Create Clickhouse vm
+  tags: clickhouse
+  ycc_vm:
+    auth:
+      token: "{{ yc_token }}"
+    name: clickhouse
+    login: "{{ yc_ssh_username }}"
+    public_ssh_key: "{{ yc_ssh_pkey }}"
+    hostname: clickhouse-01
+    zone_id: "{{ yc_zone }}"
+    folder_id: "{{ yc_folder_id }}"
+    platform_id: "Intel Cascade Lake"
+    core_fraction: 100
+    cores: 2
+    memory: 4
+    image_id: "{{ centos7 }}"
+    disk_type: hdd
+    disk_size: 50
+    subnet_id: "{{ yc_subnet_id }}"
+    assign_public_ip: true
+    state: present
+
+- name: Start Clickhouse vm
+  tags: start
+  ycc_vm:
+    auth:
+      token: "{{ yc_token }}"
+    name: clickhouse
+    operation: start
+    folder_id: "{{ yc_folder_id }}"
+
+- name: Create Vector vm
+  tags: vector
+  ycc_vm:
+    auth:
+      token: "{{ yc_token }}"
+    name: vector
+    login: "{{ yc_ssh_username }}"
+    public_ssh_key: "{{ yc_ssh_pkey }}"
+    hostname: vector-01
+    zone_id: "{{ yc_zone }}"
+    folder_id: "{{ yc_folder_id }}"
+    platform_id: "Intel Cascade Lake"
+    core_fraction: 100
+    cores: 2
+    memory: 4
+    image_id: "{{ centos7 }}"
+    disk_type: hdd
+    disk_size: 50
+    subnet_id: "{{ yc_subnet_id }}"
+    assign_public_ip: true
+    state: present
+
+- name: Start Vector vm
+  tags: start
+  ycc_vm:
+    auth:
+      token: "{{ yc_token }}"
+    name: vector
+    operation: start
+    folder_id: "{{ yc_folder_id }}"
+
+- name: Create Lighthouse vm
+  tags: lighthouse
+  ycc_vm:
+    auth:
+      token: "{{ yc_token }}"
+    name: lighthouse
+    login: "{{ yc_ssh_username }}"
+    public_ssh_key: "{{ yc_ssh_pkey }}"
+    hostname: lighthouse-01
+    zone_id: "{{ yc_zone }}"
+    folder_id: "{{ yc_folder_id }}"
+    platform_id: "Intel Cascade Lake"
+    core_fraction: 100
+    cores: 2
+    memory: 4
+    image_id: "{{ centos7 }}"
+    disk_type: hdd
+    disk_size: 50
+    subnet_id: "{{ yc_subnet_id }}"
+    assign_public_ip: true
+    state: present
+
+- name: Start Lighthouse vm
+  tags: start
+  ycc_vm:
+    auth:
+      token: "{{ yc_token }}"
+    name: lighthouse
+    operation: start
+    folder_id: "{{ yc_folder_id }}"
+

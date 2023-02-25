@@ -1,0 +1,16 @@
+---
+# tasks file for yc-instances
+- name: Display YC instances
+  ansible.builtin.command: yc compute instance list --format=yaml --folder-name=default
+  register: yc_instances
+  failed_when: yc_instances.rc != 0
+  changed_when: false
+- name: Set fact
+  ansible.builtin.set_fact:
+    _yc_instances: '{{ yc_instances.stdout | from_yaml }}'
+- name: Add hosts
+  ansible.builtin.add_host:
+    name: "{{ item['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'] }}"
+    groups: "{{ item['name'] }}"
+  with_items: "{{ _yc_instances }}"
+
