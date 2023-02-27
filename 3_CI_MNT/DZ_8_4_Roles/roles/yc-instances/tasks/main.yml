@@ -10,7 +10,8 @@
     _yc_instances: '{{ yc_instances.stdout | from_yaml }}'
 - name: Add hosts
   ansible.builtin.add_host:
-    name: "{{ item['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'] }}"
-    groups: "{{ item['name'] }}"
+    name: "{{ item['fqdn'] | regex_search('^([^.]+)') }}"
+    ansible_host: "{{ item['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'] }}"
+    groups: "{{ item['fqdn'] | regex_search('^([^-]+)') }}"
   with_items: "{{ _yc_instances }}"
 
