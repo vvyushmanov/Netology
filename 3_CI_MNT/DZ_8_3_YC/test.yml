@@ -1,0 +1,122 @@
+---
+- name: Create VMs
+  hosts: localhost
+  tags: vm
+  tasks:
+  - name: Create Clickhouse vm
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: clickhouse
+      login: "{{ yc_ssh_username }}"
+      public_ssh_key: "{{ yc_ssh_pkey }}"
+      hostname: clickhouse-01
+      zone_id: "{{ yc_zone }}"
+      folder_id: "{{ yc_folder_id }}"
+      platform_id: "Intel Cascade Lake"
+      core_fraction: 100
+      cores: 2
+      memory: 4
+      image_id: "{{ centos7 }}"
+      disk_type: hdd
+      disk_size: 50
+      subnet_id: "{{ yc_subnet_id }}"
+      assign_public_ip: true
+      state: present
+
+  - name: Start Clickhouse vm
+    tags: start
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: clickhouse
+      operation: start
+      folder_id: "{{ yc_folder_id }}"
+
+  - name: Create Vector vm
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: vector
+      login: "{{ yc_ssh_username }}"
+      public_ssh_key: "{{ yc_ssh_pkey }}"
+      hostname: vector-01
+      zone_id: "{{ yc_zone }}"
+      folder_id: "{{ yc_folder_id }}"
+      platform_id: "Intel Cascade Lake"
+      core_fraction: 100
+      cores: 2
+      memory: 4
+      image_id: "{{ centos7 }}"
+      disk_type: hdd
+      disk_size: 50
+      subnet_id: "{{ yc_subnet_id }}"
+      assign_public_ip: true
+      state: present
+
+  - name: Start Vector vm
+    tags: start
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: vector
+      operation: start
+      folder_id: "{{ yc_folder_id }}"
+
+  - name: Create Lighthouse vm
+    tags: lighthouse
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: lighthouse
+      login: "{{ yc_ssh_username }}"
+      public_ssh_key: "{{ yc_ssh_pkey }}"
+      hostname: lighthouse-01
+      zone_id: "{{ yc_zone }}"
+      folder_id: "{{ yc_folder_id }}"
+      platform_id: "Intel Cascade Lake"
+      core_fraction: 100
+      cores: 2
+      memory: 4
+      image_id: "{{ centos7 }}"
+      disk_type: hdd
+      disk_size: 50
+      subnet_id: "{{ yc_subnet_id }}"
+      assign_public_ip: true
+      state: present
+
+  - name: Start Lighthouse vm
+    tags: start
+    ycc_vm:
+      auth:
+        token: "{{ yc_token }}"
+      name: vector
+      operation: start
+      folder_id: "{{ yc_folder_id }}"
+
+- name: Collect instances
+  hosts: localhost
+  tags: always
+  gather_facts: false
+  tasks:
+    - name: Display YC instances
+      ansible.builtin.command: yc compute instance list --format=yaml --folder-name=default
+      register: yc_instances
+    - name: Set fact
+      ansible.builtin.set_fact:
+        _yc_instances: '{{ yc_instances.stdout | from_yaml }}'
+    - name: Add hosts
+      ansible.builtin.add_host:
+        name: "{{ item['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'] }}"
+        groups: "{{ item['name'] }}"
+      with_items: "{{ _yc_instances }}"
+- name: Test magic vars
+  hosts: localhost
+  tasks:
+   - name: Show clickhouse IP
+     ansible.builtin.debug:
+       msg: "Clickhouse IP is {{ groups['clickhouse'][0] }}"
+
+
+
+ 

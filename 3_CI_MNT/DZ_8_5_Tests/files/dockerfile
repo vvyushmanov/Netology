@@ -1,0 +1,17 @@
+FROM pycontribs/ubuntu:latest
+
+COPY systemctl3.py /usr/bin/systemctl
+# RUN yum install -y python3 python3-pip sudo
+
+RUN if [ $(command -v apt-get) ]; then \
+        apt-get update -y && \
+        apt-get install -y apt-utils gcc git python3 python3-pip sudo; \
+    elif [ $(command -v yum) ]; then \
+        sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* &&\
+        yum install -y python2; \
+    fi
+
+RUN pip3 install psutil
+
+CMD /bin/bash

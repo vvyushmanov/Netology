@@ -1,5 +1,8 @@
 ---
 # tasks file for yc-CLV
+- name: Install python-sdk
+  ansible.builtin.pip:
+    name: yandexcloud
 - name: Create Clickhouse vm
   tags: clickhouse
   ycc_vm:
