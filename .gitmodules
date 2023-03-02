@@ -4,3 +4,6 @@
 [submodule "3_CI_MNT/DZ_8_4_Roles/roles/lighthouse-role"]
 	path = 3_CI_MNT/DZ_8_4_Roles/roles/lighthouse-role
 	url = git@github.com:vvyushmanov/lighthouse-role.git
+[submodule "3_CI_MNT/DZ_8_5_Tests/vector-role"]
+	path = 3_CI_MNT/DZ_8_5_Tests/vector-role
+	url = git@github.com:vvyushmanov/vector-role.git
