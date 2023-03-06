@@ -7,3 +7,6 @@
 [submodule "3_CI_MNT/DZ_8_5_Tests/vector-role"]
 	path = 3_CI_MNT/DZ_8_5_Tests/vector-role
 	url = git@github.com:vvyushmanov/vector-role.git
+[submodule "3_CI_MNT/DZ_8_6_Modules/my_own_collection"]
+	path = 3_CI_MNT/DZ_8_6_Modules/my_own_collection
+	url = git@github.com:vvyushmanov/my_own_collection.git

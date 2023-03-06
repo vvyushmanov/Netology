@@ -1,0 +1,9 @@
+---
+- name: Test playbook
+  hosts: localhost
+  roles:
+    - {
+      role: my_own_namespace.yandex_cloud_elk.single_task,
+      contents: "Sample text",
+      path: "test_directory/sample_file.txt"
+    }
