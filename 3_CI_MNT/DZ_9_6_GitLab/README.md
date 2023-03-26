@@ -46,3 +46,35 @@ Deploy:
 ![Alt text](img/9_closed.png)
 
 ![Alt text](img/10_comments.png)
+
+## Дополнительное задание
+
+Для того, чтобы протестировать успешный запуск контейнера и отображение ожидаемого сообщения, файл `gitlab-ci.yml` необходимо дополнить следующим образом:
+
+``` yml
+stages:
+  - build
+  - deploy
+  - test
+
+# ...
+# build and deploy stages.......
+# ...
+
+test:
+  image: gcr.io/cloud-builders/kubectl:latest
+  stage: test
+  script:
+    - kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true
+    - kubectl config set-credentials admin --token="$KUBE_TOKEN"
+    - kubectl config set-context default --cluster=k8s --user=admin
+    - kubectl config use-context default
+    - sed -i "s/__VERSION__/latest/" k8s.yaml
+    - kubectl apply -f k8s.yaml
+    - IP=$(kubectl get pod -n python-api --selector=app=python-api --output=jsonpath='{.items[0].status.podIP}')
+    - response=$(curl -X GET http://$IP:5290/get_info)
+    - echo $response
+    - echo $response | grep "Running" || exit 1
+  only:
+    - main
+```
