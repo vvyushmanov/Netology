@@ -1,0 +1,45 @@
+[0KRunning with gitlab-runner 15.10.0 (456e3482)[0;m
+[0K  on gitlab-runner-6bbbdb849d-8w4zn as3i8Uyi, system ID: r_nJcNcu6tFeZD[0;m
+section_start:1679789515:prepare_executor
+[0K[0K[36;1mPreparing the "kubernetes" executor[0;m[0;m
+[0KUsing Kubernetes namespace: default[0;m
+[0KUsing Kubernetes executor with image gcr.io/cloud-builders/kubectl:latest ...[0;m
+[0KUsing attach strategy to execute scripts...[0;m
+section_end:1679789515:prepare_executor
+[0Ksection_start:1679789515:prepare_script
+[0K[0K[36;1mPreparing environment[0;m[0;m
+Waiting for pod default/runner-as3i8uyi-project-2-concurrent-0x724v to be running, status is Pending
+Running on runner-as3i8uyi-project-2-concurrent-0x724v via gitlab-runner-6bbbdb849d-8w4zn...
+
+section_end:1679789519:prepare_script
+[0Ksection_start:1679789519:get_sources
+[0K[0K[36;1mGetting source from Git repository[0;m[0;m
+[32;1mFetching changes with git depth set to 20...[0;m
+Initialized empty Git repository in /builds/vyushmanov/gitlab-test/.git/
+[32;1mCreated fresh repository.[0;m
+[32;1mChecking out dbba1c73 as detached HEAD (ref is main)...[0;m
+
+[32;1mSkipping Git submodules setup[0;m
+
+section_end:1679789521:get_sources
+[0Ksection_start:1679789521:step_script
+[0K[0K[36;1mExecuting "step_script" stage of the job script[0;m[0;m
+[32;1m$ kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true[0;m
+Cluster "k8s" set.
+[32;1m$ kubectl config set-credentials admin --token="$KUBE_TOKEN"[0;m
+User "admin" set.
+[32;1m$ kubectl config set-context default --cluster=k8s --user=admin[0;m
+Context "default" created.
+[32;1m$ kubectl config use-context default[0;m
+Switched to context "default".
+[32;1m$ sed -i "s/__VERSION__/latest/" k8s.yaml[0;m
+[32;1m$ kubectl apply -f k8s.yaml[0;m
+namespace/python-api unchanged
+deployment.apps/python-api-deploy configured
+
+section_end:1679789526:step_script
+[0Ksection_start:1679789526:cleanup_file_variables
+[0K[0K[36;1mCleaning up project directory and file based variables[0;m[0;m
+
+section_end:1679789527:cleanup_file_variables
+[0K[32;1mJob succeeded[0;m

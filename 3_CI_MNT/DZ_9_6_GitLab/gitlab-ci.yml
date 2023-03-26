@@ -1,0 +1,31 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://localhost:2375/
+  image: cr.yandex/yc/metadata-token-docker-helper:0.2
+  services:
+    - docker:19.03.1-dind
+  script:
+    - docker build . -t cr.yandex/crp75cfq038hua7qn70s/python-api:latest
+    - docker push cr.yandex/crp75cfq038hua7qn70s/python-api:latest
+  except:
+    - main
+
+deploy:
+  image: gcr.io/cloud-builders/kubectl:latest
+  stage: deploy
+  script:
+    - kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true
+    - kubectl config set-credentials admin --token="$KUBE_TOKEN"
+    - kubectl config set-context default --cluster=k8s --user=admin
+    - kubectl config use-context default
+    - sed -i "s/__VERSION__/latest/" k8s.yaml
+    - kubectl apply -f k8s.yaml
+  only:
+    - main

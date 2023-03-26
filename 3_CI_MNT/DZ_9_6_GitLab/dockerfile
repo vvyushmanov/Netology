@@ -1,0 +1,24 @@
+FROM centos:7
+
+RUN yum -y install epel-release 
+RUN yum -y update 
+RUN yum groupinstall "Development Tools" -y 
+RUN yum install openssl-devel libffi-devel bzip2-devel -y 
+RUN yum install wget -y 
+RUN wget https://www.python.org/ftp/python/3.9.13/Python-3.9.13.tgz 
+RUN tar xvf Python-3.9.13.tgz 
+
+WORKDIR /Python-3.9.13
+RUN ./configure --enable-optimizations 
+RUN make altinstall 
+RUN /usr/local/bin/python3.9 --version 
+RUN ln -s /usr/local/bin/python3.9 /usr/bin/python3.9 
+RUN python3.9 -m pip install selinux
+
+COPY requirements.txt requirements.txt 
+RUN python3.9 -m pip install -r requirements.txt 
+RUN mkdir -p /python_api
+WORKDIR /python_api
+COPY python-api.py python-api.py
+
+CMD python3.9 /python_api/python-api.py
