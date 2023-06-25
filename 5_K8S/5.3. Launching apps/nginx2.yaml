@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-number-2
+spec:
+  selector:
+    matchLabels:
+      app: nginx2
+  template:
+    metadata:
+      labels:
+        app: nginx2
+    spec:
+      containers:
+      - name: nginx2
+        image: nginx:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+      initContainers: 
+        - name: init-nginx
+          image: busybox:latest
+          command: ['sh', '-c', 'until nslookup nginx2.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local;\
+           do echo waiting...;\
+            sleep 2; done;']
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx2
+spec:
+  selector:
+    app: nginx2
+  ports:
+  - port: 80
+    targetPort: 80
+
