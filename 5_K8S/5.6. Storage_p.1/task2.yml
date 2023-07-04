@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-logger
+  labels:
+    app: logger
+spec:
+  selector:
+    matchLabels:
+      app: logger
+  template:
+    metadata:
+      labels:
+        app: logger
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: log
+          mountPath: /logger
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: log
+        hostPath:
+          path: /var/log/

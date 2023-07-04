@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filereader
+spec:
+  selector:
+    matchLabels:
+      app: filereader
+  template:
+    metadata:
+      labels:
+        app: filereader
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command:
+          - sh
+          - -c
+          - >
+            while true; do echo "$(date +'%d.%m.%Y %H:%M:%S'): Hello, Netology!" >> /output/test.txt; sleep 5; done
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        volumeMounts:
+          - name: shared
+            mountPath: /output
+        ports:
+        - containerPort: 80
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        volumeMounts:
+          - name:  shared
+            mountPath: /input
+        ports:
+        - containerPort: 8080
+        env:
+        - name: HTTP_PORT
+          value: "8080"
+      volumes:
+        - name:  shared
+          emptyDir: 
+            sizeLimit: 500Mi
