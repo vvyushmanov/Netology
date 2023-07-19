@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webpage-cm
+  labels:
+    app: nginx
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>
+    A totally normal legit web page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+    h1{font-family:"Comic Sans";color:#000000;background-color:#ffffff;}
+    p {font-family:"Comic Sans";font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
+    </style>
+    </head>
+    <body>
+    <h1>I love this page</h1>
+    <p>2B or not 2B, that is the question</p>
+    </body>
+    </html>
+

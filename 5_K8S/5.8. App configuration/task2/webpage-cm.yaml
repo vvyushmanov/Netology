@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webpage-cm
+  labels:
+    app: nginx
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>
+    k8s configmap testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+    h1{font-family:Georgia, serif;color:#000000;background-color:#ffffff;}
+    p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
+    </style>
+    </head>
+    <body>
+    <h1>configmap superpage</h1>
+    <p>Look at my horse, my horse is amazing.</p>
+    <p>Give it a lick! mmmmm it tastes like raisins</p>
+    </body>
+    </html>
+
