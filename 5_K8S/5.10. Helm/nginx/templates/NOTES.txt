@@ -1,0 +1,1 @@
+{{ .Values.image.repository }}:{{ .Values.appVersion | default .Chart.AppVersion }} has been deployed in /{{ .Release.Namespace}}/{{ .Release.Name }}
