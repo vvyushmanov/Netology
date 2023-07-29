@@ -1,1 +1,0 @@
-/home/vyushmanov/Repos/devops-netology/3_CI_MNT/DZ_8_6_Modules/ansible/ansible/lib/ansible/modules/my_own_module.py
