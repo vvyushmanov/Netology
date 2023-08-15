@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-mt
+  labels:
+    name: nginx-mt
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/mt"
+        backend:
+          service:
+            name: nginx
+            port: 
+              name: "multitool"
