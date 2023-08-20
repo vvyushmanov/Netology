@@ -56,7 +56,7 @@ resource "yandex_vpc_network" "main" {
 
  - Создать в VPC subnet с названием public, сетью 192.168.10.0/24.
 
-```
+```hcl
 resource "yandex_vpc_subnet" "public" {
   v4_cidr_blocks = ["192.168.10.0/24"]
   zone           = "ru-central1-a"
