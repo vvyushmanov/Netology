@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+sudo apt update
+sudo apt install -y apache2
+service apache2 start
+cd /var/www/html
+echo "<html><h1>WELCOME TO SERVER! Look at 2b:</h1><img src="https://storage.yandexcloud.net/${bucket}/${file}"></html>
+" > index.html
+
+
