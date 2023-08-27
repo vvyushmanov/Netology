@@ -1,3 +1,5 @@
+### SINGLE MACHINES ###
+
 # resource "yandex_compute_instance" "public_vm" {
 #   name        = "public-vm"
 #   platform_id = "standard-v1"
@@ -79,6 +81,8 @@
 #   value = "${yandex_compute_instance.private_vm.network_interface[0].ip_address}"
 # }
 
+### INSTANCE GROUPS ###
+
 resource "yandex_iam_service_account" "ig-sa" {
   name        = "ig-sa"
   description = "service account to manage IG"
@@ -157,11 +161,7 @@ resource "yandex_compute_instance_group" "balanced-vms" {
     interval = 30
 
   }
-
-  # load_balancer {
-  #   target_group_name = "balanced-vms"
-  # }  
-
+  
   application_load_balancer {
     target_group_name = "l7-balancer"
   }
