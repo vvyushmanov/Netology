@@ -35,7 +35,7 @@
  [Файл:](../terraform/storage.tf)
 
 ```hcl
-resource "yandex_storage_object" "two-b" {
+resource "yandex_storage_object" "twob" {
   access_key = yandex_iam_service_account_static_access_key.bucket-sa-static-key.access_key
   secret_key = yandex_iam_service_account_static_access_key.bucket-sa-static-key.secret_key
   bucket     = "${yandex_storage_bucket.bucket-main.id}"
@@ -90,8 +90,8 @@ resource "yandex_storage_object" "two-b" {
       user-data = "${templatefile(
           "http-server-bootstrap.sh.tftpl", 
           { 
-            bucket = "${yandex_storage_object.two-b.bucket}", 
-            file = "${yandex_storage_object.two-b.key}" 
+            bucket = "${yandex_storage_object.twob.bucket}", 
+            file = "${yandex_storage_object.twob.key}" 
           }
         )
       }"

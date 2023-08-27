@@ -3,8 +3,8 @@
 #   content = "${templatefile(
 #         "http-server-bootstrap.sh.tftpl", 
 #         { 
-#           bucket = "${yandex_storage_object.two-b.bucket}", 
-#           file = "${yandex_storage_object.two-b.key}" 
+#           bucket = "${yandex_storage_object.twob.bucket}", 
+#           file = "${yandex_storage_object.twob.key}" 
 #         }
 #       )
 #     }"
