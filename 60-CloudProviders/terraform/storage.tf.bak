@@ -25,13 +25,6 @@ resource "yandex_iam_service_account_static_access_key" "bucket-sa-static-key" {
   description        = "static access key for object storage"
 }
 
-resource "yandex_kms_symmetric_key" "key-a" {
-  name              = "encryption-key"
-  description       = "for storage"
-  default_algorithm = "AES_128"
-  rotation_period   = "8760h" // equal to 1 year
-}
-
 ### BUCKETS ###
 
 resource "yandex_storage_bucket" "bucket-main" {
