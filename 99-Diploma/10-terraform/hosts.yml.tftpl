@@ -1,0 +1,35 @@
+all:
+  hosts:
+    node1:
+      ansible_host: ${master-nat-ip}
+      ip: ${master-local-ip}
+      access_ip: ${master-local-ip}
+    node2:
+      ansible_host: ${worker1-nat-ip}
+      ip: ${worker1-local-ip}
+      access_ip: ${worker1-local-ip}
+    node3:
+      ansible_host: ${worker2-nat-ip}
+      ip: ${worker2-local-ip}
+      access_ip: ${worker2-local-ip}
+  children:
+    kube_control_plane:
+      hosts:
+        node1:
+        node2:
+    kube_node:
+      hosts:
+        node1:
+        node2:
+        node3:
+    etcd:
+      hosts:
+        node1:
+        node2:
+        node3:
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_node:
+    calico_rr:
+      hosts: {}
