@@ -10,3 +10,6 @@
 [submodule "3_CI_MNT/DZ_8_6_Modules/my_own_collection"]
 	path = 3_CI_MNT/DZ_8_6_Modules/my_own_collection
 	url = git@github.com:vvyushmanov/my_own_collection.git
+[submodule "99-Diploma/30-app/demosite"]
+	path = 99-Diploma/30-app/demosite
+	url = git@github.com:vvyushmanov/demosite.git
