@@ -5,6 +5,7 @@ locals {
     worker1-nat-ip = yandex_compute_instance.worker1.network_interface[0].nat_ip_address
     worker2-ip = yandex_compute_instance.worker2.network_interface[0].ip_address
     worker2-nat-ip = yandex_compute_instance.worker2.network_interface[0].nat_ip_address
+    lb-ip = yandex_lb_network_load_balancer.k8s-cplane.listener.*.external_address_spec[0].*.address[0]
 }
 
 resource "local_file" "inventory" {
@@ -17,6 +18,15 @@ resource "local_file" "inventory" {
         worker1-local-ip = local.worker1-ip,
         worker2-nat-ip = local.worker2-nat-ip,
         worker2-local-ip = local.worker2-ip,
+        lb-ip = local.lb-ip
     }
   )
+}
+
+output "lb-ip" {
+  value = local.lb-ip
+}
+
+output "l7-balancer-ip" {
+  value = yandex_alb_load_balancer.k8s-l7-balancer.listener.*.endpoint[0].*.address[0].*.external_ipv4_address[0].*.address[0]
 }

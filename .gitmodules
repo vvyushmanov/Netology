@@ -12,4 +12,4 @@
 	url = git@github.com:vvyushmanov/my_own_collection.git
 [submodule "99-Diploma/30-app/demosite"]
 	path = 99-Diploma/30-app/demosite
-	url = git@github.com:vvyushmanov/demosite.git
+	url = git@gitlab.com:vvyushmanov/demosite.git
