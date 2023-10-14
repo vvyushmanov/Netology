@@ -1,0 +1,12 @@
+apiVersion: qbec.io/v1alpha1
+kind: App
+metadata:
+  name: monitoring-qbec
+spec:
+  environments:
+    default:
+      defaultNamespace: default
+      server: https://51.250.69.108:6443
+  vars: {}
+  libPaths:
+    - ./vendor

@@ -24,5 +24,6 @@ helm upgrade --install demosite-k8s gitlab/gitlab-agent \
     --set config.token=glagent-ypxMjK5WY7SeCQcz9JfCQXVJD-zkanQwbDaUqzpyX1AaRgUsXQ \
     --set config.kasAddress=wss://kas.gitlab.com
 
+helm upgrade ${APP_NAME} ./helm --install --set appVersion=$CI_COMMIT_TAG
 
 ```
