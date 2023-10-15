@@ -7,7 +7,10 @@ cp hosts.yml ../20-kubespray/inventory/
 ansible-playbook -i inventory/diploma/hosts.yml cluster.yml -b -v --user=ubuntu
 cp inventory/diploma/artifacts/admin.conf ~/.kube/config
 
+# 30-k8s
 
+qbec:
+    - change IP of ApiServer in qbec.yaml
 
 
 # CI/CD

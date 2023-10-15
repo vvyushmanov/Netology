@@ -9,6 +9,7 @@ spec:
       server: https://51.250.69.108:6443
   dataSources:
     - exec://demosite?configVar=helm-demosite
+    - exec://demosite-k8s?configVar=demosite-k8s
   vars: 
     computed:
       - name: helm-demosite
@@ -20,6 +21,23 @@ spec:
               "stdin": "",
               "inheritEnv": true,
               "timeout": "10s"
+          }
+      - name: demosite-k8s
+        code: |
+          {
+              "command": "/usr/sbin/helm",
+              "args": [
+                  "template", "demosite-k8s", "gitlab-agent",
+                  "--repo","https://charts.gitlab.io",
+                  "--namespace","gitlab-agent-demosite-k8s",
+                  "--create-namespace",
+                  "--set","image.tag=v16.5.0-rc2",
+                  "--set","config.token=glagent-ypxMjK5WY7SeCQcz9JfCQXVJD-zkanQwbDaUqzpyX1AaRgUsXQ",
+                  "--set","config.kasAddress=wss://kas.gitlab.com"],
+              "env": {},
+              "stdin": "",
+              "inheritEnv": true,
+              "timeout": "30s"
           }
   libPaths:
     - ./vendor
