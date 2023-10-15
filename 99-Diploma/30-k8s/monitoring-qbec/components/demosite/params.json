@@ -1,0 +1,8 @@
+{
+    "command": "/usr/sbin/helm",
+    "args": [ "template", "demosite", "demosite/demosite"],
+    "env": {},
+    "stdin": "",
+    "inheritEnv": true,
+    "timeout": "10s"
+}

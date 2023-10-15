@@ -1,0 +1,25 @@
+apiVersion: qbec.io/v1alpha1
+kind: App
+metadata:
+  name: monitoring-qbec
+spec:
+  environments:
+    default:
+      defaultNamespace: default
+      server: https://51.250.69.108:6443
+  dataSources:
+    - exec://demosite?configVar=helm-demosite
+  vars: 
+    computed:
+      - name: helm-demosite
+        code: |
+          {
+              "command": "/usr/sbin/helm",
+              "args": [ "template", "demosite", "demosite/demosite"],
+              "env": {},
+              "stdin": "",
+              "inheritEnv": true,
+              "timeout": "10s"
+          }
+  libPaths:
+    - ./vendor
