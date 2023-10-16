@@ -12,6 +12,8 @@ cp inventory/diploma/artifacts/admin.conf ~/.kube/config
 qbec:
     - change IP of ApiServer in qbec.yaml
 
+ qbec apply default --yes --wait
+
 
 # CI/CD
 ## need to register gitlab agent (done via qbec)
