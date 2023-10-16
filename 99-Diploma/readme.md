@@ -1,10 +1,10 @@
 ```shell
 # 10-terraform
-terraform apply
-cp hosts.yml ../20-kubespray/inventory/
+terraform apply -auto-approve
+cp ./hosts.yml ../20-kubespray/inventory/diploma/
 
-# 20-kubespray
-ansible-playbook -i inventory/diploma/hosts.yml cluster.yml -b -v --user=ubuntu
+# 20-kubespray/kubespray
+ansible-playbook -i /kubespray/inventory/diploma/hosts.yml cluster.yml -b -v --user=ubuntu
 cp inventory/diploma/artifacts/admin.conf ~/.kube/config
 
 # 30-k8s
@@ -14,7 +14,7 @@ qbec:
 
 
 # CI/CD
-## need to register gitlab agent
+## need to register gitlab agent (done via qbec)
 helm upgrade --install demosite-k8s gitlab-agent \
     --repo https://charts.gitlab.io
     --namespace gitlab-agent-demosite-k8s \

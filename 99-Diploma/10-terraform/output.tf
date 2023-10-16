@@ -23,10 +23,10 @@ resource "local_file" "inventory" {
   )
 }
 
-output "lb-ip" {
+output "k8s-apiserver" {
   value = local.lb-ip
 }
 
-output "l7-balancer-ip" {
+output "main-ip" {
   value = yandex_alb_load_balancer.k8s-l7-balancer.listener.*.endpoint[0].*.address[0].*.external_ipv4_address[0].*.address[0]
 }
