@@ -8,11 +8,27 @@ ansible-playbook -i inventory/diploma/hosts.yml cluster.yml -b -v --user=ubuntu
 cp inventory/diploma/artifacts/admin.conf ~/.kube/config
 
 # 30-k8s
+# Обновить IP адрес сервера из конфига
 
-qbec:
-    - change IP of ApiServer in qbec.yaml
+./set-apiserver-ip.sh
+qbec apply default --yes --wait
 
- qbec apply default --yes --wait
+# 40-app
+# Внести любые изменения
+git commit 
+git tag  "<version>"
+git push --tags # для деплоя в кластер
+git push origin main # для сборки без деплоя
+
+# Обновление вручную
+helm upgrade demosite demosite --repo https://vvyushmanov.github.io/demosite-helm/ --install --set appVersion=<version>
+kubectl wait --for=condition=Ready pod -l app=demosite --timeout=60s
+
+# Если Helm ругается, что нет такой установки, нужно проставить лейблы:
+./helmify.sh
+
+
+
 
 
 # CI/CD
@@ -27,13 +43,6 @@ helm upgrade --install demosite-k8s gitlab-agent \
 
 # App deployment
 
-# 30-app
-git commit 
-git tag -a v1.0.1 -m "qf"
-git push --tags
 
-
-helm upgrade demosite demosite --repo https://vvyushmanov.github.io/demosite-helm/ --install --set appVersion=$CI_COMMIT_TAG
-kubectl wait --for=condition=Ready pod -l app=demosite --timeout=60s
 
 ```
