@@ -6,8 +6,8 @@ resource "yandex_compute_instance" "master" {
 
     resources {
         cores  = 2
-        memory = 4
-        core_fraction = 5
+        memory = 8
+        core_fraction = 20
     }
 
     allow_stopping_for_update = true
@@ -42,8 +42,8 @@ resource "yandex_compute_instance" "worker1" {
 
     resources {
         cores  = 2
-        memory = 4
-        core_fraction = 5
+        memory = 8
+        core_fraction = 20
     }
 
     allow_stopping_for_update = true
@@ -78,8 +78,8 @@ resource "yandex_compute_instance" "worker2" {
 
     resources {
         cores  = 2
-        memory = 4    
-        core_fraction = 5
+        memory = 8 
+        core_fraction = 20
     }
 
     allow_stopping_for_update = true

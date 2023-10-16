@@ -22,6 +22,9 @@ resource "yandex_lb_network_load_balancer" "k8s-cplane" {
     listener {
       name = "k8s-apiserver"
       port = 6443
+      external_address_spec {
+        ip_version = "ipv4" 
+      }
     }
 
     attached_target_group {
