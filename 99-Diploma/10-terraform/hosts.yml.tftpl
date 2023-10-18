@@ -53,15 +53,6 @@ all:
         node1:
         node2:
         node3:
-%{ if node4-local-ip != "" ~}
-        node4:
-%{ endif ~}
-%{ if node5-local-ip != "" ~}
-        node5:
-%{ endif ~}
-%{ if node6-local-ip != "" ~}
-        node6:
-%{ endif ~}
     k8s_cluster:
       children:
         kube_control_plane:
