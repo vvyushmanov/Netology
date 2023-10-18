@@ -5,12 +5,12 @@ resource "yandex_lb_target_group" "control-planes" {
     region_id = "ru-central1"
 
     target {
-      subnet_id = yandex_vpc_subnet.public-a.id
+      subnet_id = data.yandex_compute_instance_group.my_group.instances.*.network_interface.0.subnet_id[0]
       address = local.node1-ip
     }
 
     target {
-      subnet_id = yandex_vpc_subnet.public-b.id
+      subnet_id = data.yandex_compute_instance_group.my_group.instances.*.network_interface.0.subnet_id[1]
       address = local.node2-ip
     }
 }
