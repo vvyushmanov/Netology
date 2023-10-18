@@ -1,0 +1,6 @@
+ansible-playbook -i inventory/mycluster/hosts.yml scale.yml -b -v \
+  --private-key=~/.ssh/private_key
+
+https://github.com/kubernetes-sigs/kubespray/blob/master/docs/getting-started.md
+
+https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/compute_instance_group#auto_scale

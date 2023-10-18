@@ -1,4 +1,4 @@
-### K8S APISERVER ###
+# ### K8S APISERVER ###
 
 resource "yandex_lb_target_group" "control-planes" {
     name = "control-planes"
@@ -6,12 +6,12 @@ resource "yandex_lb_target_group" "control-planes" {
 
     target {
       subnet_id = yandex_vpc_subnet.public-a.id
-      address = yandex_compute_instance.master.network_interface[0].ip_address
+      address = local.node1-ip
     }
 
     target {
       subnet_id = yandex_vpc_subnet.public-b.id
-      address = yandex_compute_instance.worker1.network_interface[0].ip_address
+      address = local.node2-ip
     }
 }
 
@@ -41,26 +41,6 @@ resource "yandex_lb_network_load_balancer" "k8s-cplane" {
 
 ### HTTP L7 LB ###
 
-resource "yandex_alb_target_group" "http-nodes" {
-  name = "http-nodes"
-  
-  target {
-      subnet_id = yandex_vpc_subnet.public-a.id
-      ip_address = yandex_compute_instance.master.network_interface[0].ip_address
-    }
-
-    target {
-      subnet_id = yandex_vpc_subnet.public-b.id
-      ip_address = yandex_compute_instance.worker1.network_interface[0].ip_address
-    }
-
-    target {
-      subnet_id = yandex_vpc_subnet.public-c.id
-      ip_address = yandex_compute_instance.worker2.network_interface[0].ip_address
-    }
-  
-}
-
 resource "yandex_alb_backend_group" "http-lb" {
   name = "http-lb-bg"
 
@@ -68,7 +48,7 @@ resource "yandex_alb_backend_group" "http-lb" {
     name = "http-back"
     port = 80
     weight = 1 
-    target_group_ids = [ "${yandex_alb_target_group.http-nodes.id}" ]
+    target_group_ids = [ yandex_compute_instance_group.k8s-ig.application_load_balancer.0.target_group_id ]
   
     load_balancing_config {
       panic_threshold = 50

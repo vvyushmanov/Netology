@@ -1,14 +1,14 @@
 all:
   hosts:
     node1:
-      ansible_host: ${master-nat-ip}
-      ip: ${master-local-ip}
+      ansible_host: ${node1-nat-ip}
+      ip: ${node1-local-ip}
     node2:
-      ansible_host: ${worker1-nat-ip}
-      ip: ${worker1-local-ip}
+      ansible_host: ${node2-nat-ip}
+      ip: ${node2-local-ip}
     node3:
-      ansible_host: ${worker2-nat-ip}
-      ip: ${worker2-local-ip}
+      ansible_host: ${node3-nat-ip}
+      ip: ${node3-local-ip}
   vars:
     loadbalancer_apiserver: 
       address: ${lb-ip}
