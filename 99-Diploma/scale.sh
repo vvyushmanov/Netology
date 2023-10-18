@@ -6,7 +6,7 @@ root=$(pwd)
 
 # Terraform
 cd $root/10-terraform
-terraform apply -auto-approve
+terraform apply -target="local_file.inventory" -auto-approve
 cp ./hosts.yml $root/20-kubespray/inventory/diploma/
 mainIP=$(terraform output -raw main-ip)
 

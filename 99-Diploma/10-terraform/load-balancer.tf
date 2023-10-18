@@ -41,6 +41,23 @@ resource "yandex_lb_network_load_balancer" "k8s-cplane" {
 
 ### HTTP L7 LB ###
 
+locals {
+  vm-internal-ips = data.yandex_compute_instance_group.my_group.instances.*.network_interface.0
+}
+
+resource "yandex_alb_target_group" "vms" {
+
+  name = "k8s-vms"
+  dynamic "target" {
+    for_each = local.vm-internal-ips
+    content {
+      ip_address = target.value.ip_address
+      subnet_id = target.value.subnet_id
+    }
+  }
+  
+}
+
 resource "yandex_alb_backend_group" "http-lb" {
   name = "http-lb-bg"
 
@@ -48,7 +65,7 @@ resource "yandex_alb_backend_group" "http-lb" {
     name = "http-back"
     port = 80
     weight = 1 
-    target_group_ids = [ yandex_compute_instance_group.k8s-ig.application_load_balancer.0.target_group_id ]
+    target_group_ids = [ yandex_alb_target_group.vms.id ]
   
     load_balancing_config {
       panic_threshold = 50

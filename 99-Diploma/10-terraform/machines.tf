@@ -65,11 +65,8 @@ resource "yandex_compute_instance_group" "k8s-ig" {
       }
       min_zone_size = 1
       max_size = 6
+      stabilization_duration = 0
     }
-  }
-
-  application_load_balancer {
-    target_group_name = "k8s-l7-lb-group"
   }
 
   allocation_policy {
@@ -77,9 +74,9 @@ resource "yandex_compute_instance_group" "k8s-ig" {
   }
 
   deploy_policy {
-    max_unavailable = 2
+    max_unavailable = 3
     max_creating    = 10
     max_expansion   = 6
-    max_deleting    = 1
+    max_deleting    = 6
   }
 }

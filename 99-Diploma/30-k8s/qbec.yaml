@@ -6,7 +6,7 @@ spec:
   environments:
     default:
       defaultNamespace: default
-      server: https://158.160.77.219:6443
+      server: https://130.193.42.70:6443
   dataSources:
     - exec://demosite?configVar=helm-demosite
     - exec://demosite-k8s?configVar=demosite-k8s
