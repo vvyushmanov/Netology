@@ -49,11 +49,11 @@ data "yandex_compute_instance_group" "my_group" {
   instance_group_id = yandex_compute_instance_group.k8s-ig.id
 }
 
-output "instance_external_ip" {
+output "instance_internal_ip" {
   value = "${data.yandex_compute_instance_group.my_group.instances.*.network_interface.0.ip_address}"
 }
 
-output "instance_internal_ip" {
+output "instance_external_ip" {
   value = "${data.yandex_compute_instance_group.my_group.instances.*.network_interface.0.nat_ip_address}"
 }
 

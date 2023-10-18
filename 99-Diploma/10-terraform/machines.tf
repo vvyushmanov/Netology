@@ -63,7 +63,7 @@ resource "yandex_compute_instance_group" "k8s-ig" {
         metric_type = "COUNTER"
         target = 80
       }
-      min_zone_size = 2
+      min_zone_size = 1
       max_size = 6
       stabilization_duration = 0
     }
