@@ -40,12 +40,12 @@ resource "local_file" "inventory" {
   filename = "hosts.yml"
   content = templatefile("hosts.yml.tftpl",
     {
-        master-nat-ip = local.master-nat-ip,
-        master-local-ip = local.master-ip,
-        worker1-nat-ip = local.worker1-nat-ip,
-        worker1-local-ip = local.worker1-ip,
-        worker2-nat-ip = local.worker2-nat-ip,
-        worker2-local-ip = local.worker2-ip,
+        node1-nat-ip = local.node1-nat-ip,
+        node1-local-ip = local.node1-ip,
+        node2-nat-ip = local.node2-nat-ip,
+        node2-local-ip = local.node2-ip,
+        node3-nat-ip = local.node3-nat-ip,
+        node3-local-ip = local.node3-ip,
         lb-ip = local.lb-ip
     }
   )

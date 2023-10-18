@@ -1,111 +1,3 @@
-# resource "yandex_compute_instance" "master" {
-
-#     name = "master"
-#     folder_id = local.folder_id
-#     zone = "ru-central1-a"
-
-#     resources {
-#         cores  = 2
-#         memory = 8
-#         core_fraction = 20
-#     }
-
-#     allow_stopping_for_update = true
-
-#     network_interface {
-#         subnet_id = yandex_vpc_subnet.public-a.id
-#         nat = true
-#     }
-
-#     scheduling_policy {
-#         preemptible = true
-#     }
-
-#     metadata = {
-#         ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
-#     }
-
-#     boot_disk {
-#         initialize_params {
-#         # Ubuntu 22.04 LTS
-#         image_id = "fd8tkfhqgbht3sigr37c"
-#         size = 20
-#         }
-#     }
-# }
-
-# resource "yandex_compute_instance" "worker1" {
-
-#     name = "worker1"
-#     folder_id = local.folder_id
-#     zone = "ru-central1-b"
-
-#     resources {
-#         cores  = 2
-#         memory = 8
-#         core_fraction = 20
-#     }
-
-#     allow_stopping_for_update = true
-
-#     network_interface {
-#         subnet_id = yandex_vpc_subnet.public-b.id
-#         nat = true
-#     }
-
-#     scheduling_policy {
-#         preemptible = true
-#     }
-
-#     metadata = {
-#         ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
-#     }
-
-#     boot_disk {
-#         initialize_params {
-#         # Ubuntu 22.04 LTS
-#         image_id = "fd8tkfhqgbht3sigr37c"
-#         size = 20
-#         }
-#     }
-# }
-
-# resource "yandex_compute_instance" "worker2" {
-
-#     name = "worker2"
-#     folder_id = local.folder_id
-#     zone = "ru-central1-c"
-
-#     resources {
-#         cores  = 2
-#         memory = 8 
-#         core_fraction = 20
-#     }
-
-#     allow_stopping_for_update = true
-
-#     network_interface {
-#         subnet_id = yandex_vpc_subnet.public-c.id
-#         nat = true
-#     }
-
-#     scheduling_policy {
-#         preemptible = true
-#     }
-
-#     metadata = {
-#         ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
-#     }
-
-#     boot_disk {
-#         initialize_params {
-#         # Ubuntu 22.04 LTS
-#         image_id = "fd8tkfhqgbht3sigr37c"
-#         size = 20
-#         }
-#     }
-# }
-
 resource "yandex_iam_service_account" "ig-sa" {
   name        = "ig-sa"
   description = "service account to manage IG"
@@ -149,11 +41,8 @@ resource "yandex_compute_instance_group" "k8s-ig" {
         yandex_vpc_subnet.public-a.id, 
         yandex_vpc_subnet.public-b.id, 
         yandex_vpc_subnet.public-c.id  
-        ]
-
-      
+        ]      
     }    
-
 
     metadata = {
       ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
@@ -166,7 +55,7 @@ resource "yandex_compute_instance_group" "k8s-ig" {
 
   scale_policy {
     auto_scale {
-      initial_size = 3
+      initial_size = 4
       measurement_duration = 300
       custom_rule {
         rule_type = "UTILIZATION"
@@ -176,8 +65,6 @@ resource "yandex_compute_instance_group" "k8s-ig" {
       }
       min_zone_size = 1
       max_size = 6
-      warmup_duration = 120
-      stabilization_duration = 120
     }
   }
 
@@ -191,8 +78,8 @@ resource "yandex_compute_instance_group" "k8s-ig" {
 
   deploy_policy {
     max_unavailable = 2
-    max_creating    = 3
-    max_expansion   = 2
-    max_deleting    = 2
+    max_creating    = 10
+    max_expansion   = 6
+    max_deleting    = 1
   }
 }

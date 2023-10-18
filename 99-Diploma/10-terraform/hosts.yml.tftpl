@@ -9,6 +9,21 @@ all:
     node3:
       ansible_host: ${node3-nat-ip}
       ip: ${node3-local-ip}
+%{ if node4-local-ip != "" ~}
+    node4:
+      ansible_host: ${node4-nat-ip}
+      ip: ${node4-local-ip}
+%{ endif ~}
+%{ if node5-local-ip != "" ~}
+    node5:
+      ansible_host: ${node5-nat-ip}
+      ip: ${node5-local-ip}
+%{ endif ~}
+%{ if node6-local-ip != "" ~}
+    node6:
+      ansible_host: ${node6-nat-ip}
+      ip: ${node6-local-ip}
+%{ endif ~}
   vars:
     loadbalancer_apiserver: 
       address: ${lb-ip}
@@ -24,11 +39,29 @@ all:
         node1:
         node2:
         node3:
+%{ if node4-local-ip != "" ~}
+        node4:
+%{ endif ~}
+%{ if node5-local-ip != "" ~}
+        node5:
+%{ endif ~}
+%{ if node6-local-ip != "" ~}
+        node6:
+%{ endif ~}
     etcd:
       hosts:
         node1:
         node2:
         node3:
+%{ if node4-local-ip != "" ~}
+        node4:
+%{ endif ~}
+%{ if node5-local-ip != "" ~}
+        node5:
+%{ endif ~}
+%{ if node6-local-ip != "" ~}
+        node6:
+%{ endif ~}
     k8s_cluster:
       children:
         kube_control_plane:
