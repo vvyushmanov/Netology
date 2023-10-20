@@ -6,6 +6,9 @@ root=$(pwd)
 
 # Terraform
 cd $root/10-terraform
+terraform apply -target=yandex_vpc_subnet.public-a \
+     -target=yandex_vpc_subnet.public-b \
+     -target=yandex_vpc_subnet.public-c -auto-approve
 terraform apply -auto-approve
 cp ./hosts.yml $root/20-kubespray/inventory/diploma/
 mainIP=$(terraform output -raw main-ip)

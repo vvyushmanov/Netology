@@ -9,14 +9,6 @@
 5. Настроить CI для автоматической сборки и тестирования.
 6. Настроить CD для автоматического развёртывания приложения.
 
-## Ссылка на тестовое приложение и веб интерфейс Grafana с данными доступа
-
-Доступ к приложению: http://130.193.40.19/
-
-Grafana: http://130.193.40.19/grafana/
-
-Доступ: admin / netology
-
 ## Инфраструктура
 
 ### Terraform
@@ -33,7 +25,8 @@ Grafana: http://130.193.40.19/grafana/
 
 ![3](./99-assets/terraform_cloud/3.png)
 
-Терраформ по результатам работы генерирует файл hosts.yaml по шаблону [hosts.yml.tftpl](./10-terraform/hosts.yml.tftpl):
+Терраформ по результатам работы генерирует файл hosts.yaml по шаблону [hosts.yml.tftpl](./10-terraform/hosts.yml.tftpl).
+Ноды 4-6 создаются опционально, в зависиомсти от того, были ли они созданы, это достигается благодаря использовании функции try() в tf манифесте и функции if в шаблоне.
 
 ```hcl
 resource "local_file" "inventory" {
@@ -46,6 +39,13 @@ resource "local_file" "inventory" {
         node2-local-ip = local.node2-ip,
         node3-nat-ip = local.node3-nat-ip,
         node3-local-ip = local.node3-ip,
+        node4-nat-ip = local.node4-nat-ip,
+        node4-local-ip = local.node4-ip,
+        node5-nat-ip = local.node5-nat-ip,
+        node5-local-ip = local.node5-ip,
+        node6-nat-ip = local.node6-nat-ip,
+        node6-local-ip = local.node6-ip,
+
         lb-ip = local.lb-ip
     }
   )
@@ -59,6 +59,8 @@ resource "local_file" "inventory" {
 ### Ansible playbook (Kubespray)
 
 1. [Репозиторий](./20-kubespray/)
+
+Для расширения кластера используется скрипт [scale.sh](./scale.sh)
 
 ### Приложение (web-страница)
 
@@ -103,6 +105,10 @@ root=$(pwd)
 
 ### Terraform ###
 cd $root/10-terraform
+# Создаём сети, чтобы обращаться к ним с помощью data source 
+terraform apply -target=yandex_vpc_subnet.public-a \
+     -target=yandex_vpc_subnet.public-b \
+     -target=yandex_vpc_subnet.public-c -auto-approve
 # Применяем конфиг и разворачиваем ресурсы
 terraform apply -auto-approve
 # Копируем сгенерированный Terraform'ом с помощью templatefile() инвентарь 
@@ -202,6 +208,9 @@ deploy-k8s:
   rules:
     - if: $CI_COMMIT_TAG
 ```
+
+Для получения доступа к кластеру используется интеграция через https://docs.gitlab.com/ee/user/clusters/agent/.
+Конфигурация разворачивается с помощью [qbec](./30-k8s/qbec.yaml)
 
 ### Ручное обновление
 
