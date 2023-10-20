@@ -8,6 +8,7 @@ variables:
 
 terraform_apply:
   stage: terraform
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   script:
     - cd $ROOT_DIR/10-terraform
     - terraform apply -target=yandex_vpc_subnet.public-a \
