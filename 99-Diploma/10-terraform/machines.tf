@@ -37,11 +37,7 @@ resource "yandex_compute_instance_group" "k8s-ig" {
     network_interface {
       network_id = yandex_vpc_network.main.id
       nat = true
-      subnet_ids = [ 
-        yandex_vpc_subnet.public-a.id, 
-        yandex_vpc_subnet.public-b.id, 
-        yandex_vpc_subnet.public-c.id  
-        ]      
+      subnet_ids = data.yandex_vpc_network.network.subnet_ids     
     }    
 
     metadata = {
@@ -67,10 +63,10 @@ resource "yandex_compute_instance_group" "k8s-ig" {
       max_size = 6
       stabilization_duration = 0
     }
-  }
+  }  
 
   allocation_policy {
-    zones = ["ru-central1-a", "ru-central1-b", "ru-central1-c"]
+    zones = [ for subnet in data.yandex_vpc_subnet.subnets : subnet.zone ]
   }
 
   deploy_policy {

@@ -1,17 +1,20 @@
 # ### K8S APISERVER ###
 
+locals {
+  vm-network-iface = data.yandex_compute_instance_group.my_group.instances.*.network_interface.0
+  apiservers = slice(local.vm-network-iface, 0, 2)
+}
+
 resource "yandex_lb_target_group" "control-planes" {
     name = "control-planes"
     region_id = "ru-central1"
 
-    target {
-      subnet_id = data.yandex_compute_instance_group.my_group.instances.*.network_interface.0.subnet_id[0]
-      address = local.node1-ip
-    }
-
-    target {
-      subnet_id = data.yandex_compute_instance_group.my_group.instances.*.network_interface.0.subnet_id[1]
-      address = local.node2-ip
+    dynamic "target" {
+      for_each = local.apiservers
+      content {
+        subnet_id = target.value.subnet_id
+        address = target.value.ip_address
+      }
     }
 }
 
@@ -41,15 +44,11 @@ resource "yandex_lb_network_load_balancer" "k8s-cplane" {
 
 ### HTTP L7 LB ###
 
-locals {
-  vm-internal-ips = data.yandex_compute_instance_group.my_group.instances.*.network_interface.0
-}
-
 resource "yandex_alb_target_group" "vms" {
 
   name = "k8s-vms"
   dynamic "target" {
-    for_each = local.vm-internal-ips
+    for_each = local.vm-network-iface
     content {
       ip_address = target.value.ip_address
       subnet_id = target.value.subnet_id
@@ -99,25 +98,27 @@ resource "yandex_alb_virtual_host" "my-virtual-host" {
   }
 } 
 
+data "yandex_vpc_network" "network" {
+  network_id = yandex_vpc_network.main.id
+}
+
+data "yandex_vpc_subnet" "subnets" {
+  for_each = toset(data.yandex_vpc_network.network.subnet_ids)
+  subnet_id = each.key
+}
+
 resource "yandex_alb_load_balancer" "k8s-l7-balancer" {
 
   name = "k8s-l7-balancer"
   network_id = yandex_vpc_network.main.id
 
   allocation_policy {
-    location {
-      zone_id   = "ru-central1-a"
-      subnet_id = yandex_vpc_subnet.public-a.id
-    }
-
-    location {
-      zone_id   = "ru-central1-b"
-      subnet_id = yandex_vpc_subnet.public-b.id
-    }
-
-    location {
-      zone_id   = "ru-central1-c"
-      subnet_id = yandex_vpc_subnet.public-c.id
+    dynamic "location" {
+      for_each = data.yandex_vpc_subnet.subnets
+      content {
+        subnet_id = location.value.subnet_id
+        zone_id = location.value.zone
+      }
     }
   }
 
