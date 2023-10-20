@@ -1,0 +1,31 @@
+stages:
+  - terraform
+  - kubespray
+  - kubewait
+
+variables:
+  ROOT_DIR: $CI_PROJECT_DIR/99-Diploma
+
+terraform_apply:
+  stage: terraform
+  script:
+    - cd $ROOT_DIR/10-terraform
+    - terraform apply -target=yandex_vpc_subnet.public-a \
+        -target=yandex_vpc_subnet.public-b \
+        -target=yandex_vpc_subnet.public-c -auto-approve
+    - terraform apply -auto-approve
+    - cp ./hosts.yml $ROOT_DIR/20-kubespray/inventory/diploma/
+
+kubespray_deploy:
+  stage: kubespray
+  image: djerfy/gitlab-ci-ansible:latest
+  script:
+    - cd $ROOT_DIR/20-kubespray
+    - ansible-playbook -i inventory/diploma/hosts.yml scale.yml -b -v --user=ubuntu
+    
+
+k8s-wait:
+  stage: kubewait
+  script: 
+    - kubectl wait --for=condition=Ready pod -n kube-system --all --timeout=900s
+
