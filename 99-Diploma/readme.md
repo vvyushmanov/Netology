@@ -191,7 +191,7 @@ build-version:
     - docker push vyushmanov/demosite:$CI_COMMIT_TAG
     - docker push vyushmanov/demosite:latest
   rules:
-    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG =~ /[0-9]+\.[0-9]+\.[0-9]+/
 
 deploy-k8s:
   stage: deploy
@@ -206,7 +206,7 @@ deploy-k8s:
     - kubectl wait --for=condition=Ready pod -l app=demosite --timeout=60s
     - kubectl get pods
   rules:
-    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG =~ /[0-9]+\.[0-9]+\.[0-9]+/
 ```
 
 Для получения доступа к кластеру используется интеграция через https://docs.gitlab.com/ee/user/clusters/agent/.
