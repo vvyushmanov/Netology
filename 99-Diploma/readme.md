@@ -209,7 +209,7 @@ deploy-k8s:
     - if: $CI_COMMIT_TAG =~ /[0-9]+\.[0-9]+\.[0-9]+/
 ```
 
-Для получения доступа к кластеру используется интеграция через https://docs.gitlab.com/ee/user/clusters/agent/.
+Для получения доступа к кластеру используется интеграция через https://docs.gitlab.com/ee/user/clusters/agent/ci_cd_workflow.html .
 Конфигурация разворачивается с помощью [qbec](./30-k8s/qbec.yaml)
 
 ### Ручное обновление
